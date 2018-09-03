@@ -1,52 +1,56 @@
 <template>
     <div class="table">
-        <div>
-            <el-form :inline="true" class="demo-form-inline" style="display:flex; justify-content: space-between;">
-                <el-form-item>
-                    <el-button type="primary" @click="openRoleInfoDialog(undefined)">新增</el-button>
-                </el-form-item>
-            </el-form>
+        <div class="crumbs">
+            <el-breadcrumb separator="/">
+                <el-breadcrumb-item><i class="el-icon-tickets"></i> 资源管理</el-breadcrumb-item>
+            </el-breadcrumb>
         </div>
-        <el-table v-loading.body="loading" :data="roles" border style="width: 100%">
-            <el-table-column type="selection" width="50"></el-table-column>
-            <el-table-column prop="role" label="权限" align="center"  />
-            <el-table-column prop="roleName" label="权限名称" align="center"/>
-            <el-table-column prop="createTime" label="创建时间" align="center" :formatter="dateFormatter" width="180" />
-            <el-table-column prop="deleteFlag" label="是否删除" align="center" :formatter="deleteFlagFormatter" width="100" />
-            <el-table-column label="操作" align="center" width="180">
-                <template scope="scope">
-                    <el-button size="small" :disabled="scope.row.deleteFlag==1" @click="openRoleInfoDialog(scope.row.id)" icon="edit">编辑</el-button>
-                    <el-button size="small" :disabled="scope.row.deleteFlag==1" v-if="scope.row.deleteFlag == 0" type="danger" icon="delete" @click="deleteRole(scope.row.id)">删除</el-button>
-                </template>
-            </el-table-column>
-        </el-table>
-        <div class="foot_pagination">
-            <el-form>
-                <el-form-item>
-                    <el-button type="primary">批量删除</el-button>
-                </el-form-item>
-            </el-form>
-            <div class="pagination">
-                <el-pagination @size-change="handleSizeChange" @current-change="handleCurrentChange" layout="sizes,total, prev, pager, next, jumper" :page-sizes="[10, 15, 20, 30]" :total="total" :page-size="cur_size" :current-page="cur_page">
-                </el-pagination>
-            </div>
-        </div>
-        <div style="width:30%;">
-            <el-dialog title="权限信息" :visible.sync="roleInfoDialog" :modal="true">
-                <el-form>
-                    <el-form-item label="权限" :label-width="formLabelWidth">
-                        <el-input v-model="role.role" auto-complete="off"></el-input>
+        <div class="container">
+            <div>
+                <el-form :inline="true" class="demo-form-inline" style="justify-content: space-between;">
+                    <el-form-item>
+                        <el-button type="primary" @click="openRoleInfoDialog">新增</el-button>
                     </el-form-item>
-                    <el-form-item label="名称" :label-width="formLabelWidth">
-                        <el-input v-model="role.roleName" auto-complete="off"></el-input>
+                    <el-form-item>
+                        <el-button type="primary" @click="deleteRole">删除</el-button>
                     </el-form-item>
                 </el-form>
-                <div slot="footer" class="dialog-footer">
-                    <el-button @click="roleInfoDialog = false">取 消</el-button>
-                    <el-button type="primary" @click="saveRole">确 定</el-button>
-                </div>
-            </el-dialog>
+            </div>
+            <div class="container">
+                <el-tree
+                    style="border: 1px lightgray"
+                    :data="roles"
+                    show-checkbox
+                    node-key="id"
+                    @check="nodeCheck">
+                </el-tree>
+            </div>
         </div>
+
+        <div style="width:30%;">
+        <el-dialog title="权限信息" :visible.sync="roleInfoDialog" :modal="true" @close="">
+            <el-form>
+                <el-form-item label="父节点" :label-width="formLabelWidth">
+                        <el-cascader
+                            placeholder="试试搜索：指南"
+                            :options="roles"
+                            :props="props"
+                            change-on-select
+                        ></el-cascader>
+                </el-form-item>
+                <el-form-item label="权限" :label-width="formLabelWidth">
+                    <el-input v-model="role.role" auto-complete="off"></el-input>
+                </el-form-item>
+                <el-form-item label="名称" :label-width="formLabelWidth">
+                    <el-input v-model="role.roleName" auto-complete="off"></el-input>
+                </el-form-item>
+            </el-form>
+            <div slot="footer" class="dialog-footer">
+                <el-button @click="roleInfoDialog = false">取 消</el-button>
+                <el-button type="primary" @click="saveRole">确 定</el-button>
+            </div>
+        </el-dialog>
+    </div>
     </div>
 </template>
 
@@ -63,108 +67,137 @@
             loading: true,
             formLabelWidth: '80px',
             roleInfoDialog: false,
-            role: {}
+            role: {},
+            selectedItems:[],//被选中的节点的id
+            selected:[],
+            props:{
+                value :'id',
+                label: 'label'
+            }
         }
     },
     created() {
         this.getData(this.cur_page, this.cur_size);
     },
     methods: {
-        handleSizeChange(val) {
-            this.cur_size = val;
-            this.getData(1, val);
-        },
-        handleCurrentChange(val) {
-            this.cur_page = val;
-            this.getData(val, this.cur_size);
-        },
-        getData(currentPage, currentSize) {
+        deleteRole(){
             let self = this;
-            postData(processUrl(self.$env,'users/roles/getAllRolesInPage'),
-                { page: currentPage, pageSize: currentSize },
-                { headers: { "Authorization": localStorage.getItem("AuthenticationToken") } }).
-                then(function(data) {
-                    let pageData = data.body;
-                    self.total = pageData.totalRecord;
-                    self.roles = data.body.data;
-                    self.loading = false;
-                    this.$message({message:'加载成功！',
+            if(undefined == self.selectedItems || self.selectedItems.length <= 0) {
+                self.$alert('请选择需要删除的数据!!!', '', {
+                    confirmButtonText: '确定',
+                    cancelButtonText: '取消',
+                    type: 'warning',
+                });
+
+                return false;
+            }
+            self.$confirm('是否继续操作？','',{
+                confirmButtonText: '确定',
+                cancelButtonText: '取消',
+                type: 'warning'
+            }).then(() => {
+                postData(processUrl(self.$env,'users/roles/deleteRole'), { roleIds: self.selectedItems }).then(function(data) {
+                    self.$message({message:'已删除！',
                         type:'success',
                         center:true
                     });
+                    self.getData(self.cur_page, self.cur_size);
                 }, function(data) {
                     this.$message({message:'操作失败！',
                         type:'error',
                         center:true
                     });
-                })
-        },
-        dateFormatter(row) {
-            return formatDate(new Date(row.createTime), "yyyy-MM-dd hh:mm:ss");
-        },
-        deleteFlagFormatter(row) {
-            if (row.deleteFlag === 0) {
-                return "否";
-            }
-            return "是";
-        },
-        deleteRole(roleId) {
-            console.log(roleId);
-            let self = this;
-            postData(processUrl(self.$env,'users/roles/deleteRole'), { roleId: roleId }, { headers: { "Authorization": localStorage.getItem("AuthenticationToken") } }).then(function(data) {
-                this.$message({message:'加载成功！',
-                    type:'success',
-                    center:true
                 });
-                this.getData(this.cur_page, this.cur_size);
-            }, function(data) {
-                this.$message({message:'操作失败！',
-                    type:'error',
-                    center:true
+            }).catch(() => {
+                self.$message({
+                    type: 'info',
+                    message: '已取消删除'
                 });
             });
         },
-        openRoleInfoDialog(roleId) {
-            this.roleInfoDialog = true;
-            if (roleId != undefined) {
-                postData(processUrl(self.$env,'users/roles/getRoleById'), { roleId: roleId }, { headers: { "Authorization": localStorage.getItem("AuthenticationToken") } }).
-                    then(function(data) {
-                        this.role = data.body.data;
-                    }, function(data) {
-                        this.$message({message:'操作失败！',
-                            type:'error',
-                            center:true
-                        });
-                    });
-            } else {
-                this.role = {};
+        traverseTree(node){
+            if (!node) {
+                return;
+            }
+            //判断子节点是否为空，若不为空继续遍历，否则删除子节点
+            if (node.children && node.children.length > 0) {
+                var i = 0;
+                for (i = 0; i < node.children.length; i++) {
+                    this.traverseTree(node.children[i]);
+                }
+            }else {
+                delete node.children;
             }
         },
+        nodeCheck(node, selected){
+            let self = this;
+            self.selectedItems = selected.checkedKeys;
+        },
+        handleSizeChange(val) {
+            let self = this;
+            self.cur_size = val;
+            self.getData(1, val);
+        },
+        handleCurrentChange(val) {
+            let self = this;
+            self.cur_page = val;
+            self.getData(val, this.cur_size);
+        },
+        getData(currentPage, currentSize) {
+            let self = this;
+            postData(processUrl(self.$env,'users/roles/getRoleTrees'), {},).then(function(data) {
+                self.roles = data.data;
+                self.selected = data.data;
+                self.loading = false;
+                self.$message({message:'加载成功！',
+                    type:'success',
+                    center:true
+                });
+            }, function(data) {
+                self.$message({message:'操作失败！',
+                    type:'error',
+                    center:true
+                });
+            })
+        },
+        openRoleInfoDialog() {
+            let self = this;
+            self.roleInfoDialog = true;
+
+            for(let i in self.selected) {
+                let role = self.selected[i];
+                self.traverseTree(role);
+            }
+
+            console.log(self.selected)
+            console.log(self.roles)
+        },
         saveRole() {
-            if (this.role.id == undefined) {
-                postData(processUrl(self.$env,'users/roles/addRole'), this.role, { headers: { "Authorization": localStorage.getItem("AuthenticationToken") } }).then(function(data) {
-                    this.$message({message:'加载成功！',
+            let self = this
+            if (self.role.id == undefined) {
+                postData(processUrl(self.$env,'users/roles/addRole'), this.role).then(function(data) {
+                    self.$message({message:'加载成功！',
                         type:'success',
                         center:true
                     });
-                    this.getData(this.cur_page, this.cur_size);
-                    this.roleInfoDialog = false;
+                    self.getData(self.cur_page, self.cur_size);
+                    self.roleInfoDialog = false;
                 }, function(data) {
-                    this.$message({message:'操作失败！',
+                    self.$message({message:'操作失败！',
                         type:'error',
                         center:true
                     });
                 });
             } else {
-                postData(processUrl(self.$env,'users/roles/editRole'), this.role, { headers: { "Authorization": localStorage.getItem("AuthenticationToken") } }).then(function(data) {
-                    this.$message({message:'加载成功！',
+                postData(processUrl(self.$env,'users/roles/editRole'), self.role).then(function(data) {
+                    self.$message({message:'加载成功！',
                         type:'success',
                         center:true
                     });
-                    this.getData(this.cur_page, this.cur_size);
-                    this.roleInfoDialog = false;
+                    self.getData(self.cur_page, self.cur_size);
+                    self.roleInfoDialog = false;
                 }, function(data) {
-                    this.$message({message:'操作失败！',
+                    self.$message({message:'操作失败！',
                         type:'error',
                         center:true
                     });

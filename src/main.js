@@ -6,9 +6,13 @@ import "element-ui/lib/theme-chalk/index.css";
 import "babel-polyfill";    // 默认主题
 // import '../static/css/theme-green/index.css';       // 浅绿色主题
 import VueResource from "vue-resource";
+import constants from './js/constants';
+const vueConfig = require('vue-config')
 
 Vue.use(ElementUI);
 Vue.use(VueResource);
+Vue.use(vueConfig, constants);
+
 
 Vue.prototype.$env = 'dev';
 Vue.http.options.root = 'http://localhost:1987/';

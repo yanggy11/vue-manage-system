@@ -13,13 +13,13 @@
             </el-table-column>
             <el-table-column prop="path" label="网关路径" align="center" width="150" fixed>
             </el-table-column>
-            <el-table-column prop="serviceId" label="转发服务" align="center" width="200" fixed>
+            <el-table-column prop="serviceId" label="转发服务" align="center" fixed>
             </el-table-column>
             <el-table-column prop="stripPrefix" label="前缀" align="center" :formatter="prefixFormatter" width="60" fixed/>
             <el-table-column prop="retryable" label="重试" align="center" :formatter="retryableFormatter" width="60" fixed/>
             <el-table-column prop="enabled" label="启用" align="center" :formatter="enabledFormatter" width="60" fixed/>
-            <el-table-column prop="createTime" label="创建时间" align="center" :formatter="dateFormatter" width="180" fixed/>
-            <el-table-column label="操作" align="center" width="160" fixed>
+            <el-table-column prop="createTime" label="创建时间" align="center" :formatter="dateFormatter" fixed/>
+            <el-table-column label="操作" align="center" fixed>
                 <template scope="scope">
                     <el-button size="small" icon="delete">编辑</el-button>
                     <el-button size="small" type="danger" @click="enableOrDisable(scope.row.dynamicId, true)" icon="delete" v-if="scope.row.enabled == false">启用</el-button>

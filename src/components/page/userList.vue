@@ -6,63 +6,63 @@
             </el-breadcrumb>
         </div>
         <div class="container">
-        <div>
-            <el-form :inline="true" :model="criteria" class="demo-form-inline" style="display:flex; justify-content: space-between;">
-                <div>
-                    <el-form-item>
-                        <el-button type="primary" @click="openUserInfo(0,undefined)">新增</el-button>
-                    </el-form-item>
-                    <el-form-item>
-                        <el-button type="primary" @click="deleteAll">批量删除</el-button>
-                    </el-form-item>
-                </div>
-                <div>
-                    <el-form-item label="姓名">
-                        <el-input v-model="criteria.name" placeholder="姓名"></el-input>
-                    </el-form-item>
-                    <el-form-item label="性别">
-                        <el-select v-model="criteria.sex" placeholder="请选择">
-                            <el-option v-for="item in genders" :label="item.label" :value="item.value" :key="item.label"></el-option>
-                        </el-select>
-                    </el-form-item>
-                    <el-form-item>
-                        <el-button type="primary" @click="queryData">查询</el-button>
-                    </el-form-item>
-                </div>
-            </el-form>
-        </div>
-        <el-table v-loading.body="loading" :data="tableData" border style="width: 100%" @selection-change="selectRows">
-            <el-table-column type="selection" width="50"/>
-            <el-table-column prop="name" label="姓名" align="center" width="120" />
-            <el-table-column prop="age" label="年龄" align="center" width="80" />
-            <el-table-column prop="sex" label="性别" align="center" :formatter="sexFormatter" width="60" />
-            <el-table-column prop="phone" label="手机号" align="center" width="110"  />
-            <el-table-column prop="email" label="邮箱" align="center" width="200"/>
-            <el-table-column prop="createTime" label="创建时间" align="center" :formatter="dateFormatter"/>
-            <el-table-column prop="avater" label="头像" align="center" width="60">
-                <template  slot-scope="scope">
-                    <el-popover trigger="hover" placement="top">
-                        <img :src="scope.row.avater" v-show="scope.row.avater" height="400" width="400"/>
-                        <img v-show="scope.row.avater" slot="reference" :src="scope.row.avater" height="20" width="20"/>
-                    </el-popover>
-                </template>
-            </el-table-column>
-            <el-table-column prop="deleteFlag" label="状态" align="center" :formatter="deleteFlagFormatter" width="100"/>
-            <el-table-column label="操作" align="center" width="160">
-                <template slot-scope="scope">
-                    <el-button size="small" type="primary" @click="openUserInfo(1, scope.row)" icon="delete">编辑</el-button>
+            <div>
+                <el-form :inline="true" :model="criteria" class="demo-form-inline" style="display:flex; justify-content: space-between;">
+                    <div>
+                        <el-form-item>
+                            <el-button type="primary" @click="openUserInfo(0,undefined)">新增</el-button>
+                        </el-form-item>
+                        <el-form-item>
+                            <el-button type="primary" @click="deleteAll">批量删除</el-button>
+                        </el-form-item>
+                    </div>
+                    <div>
+                        <el-form-item label="姓名">
+                            <el-input v-model="criteria.name" placeholder="姓名"></el-input>
+                        </el-form-item>
+                        <el-form-item label="性别">
+                            <el-select v-model="criteria.sex" placeholder="请选择">
+                                <el-option v-for="item in genders" :label="item.label" :value="item.value" :key="item.label"></el-option>
+                            </el-select>
+                        </el-form-item>
+                        <el-form-item>
+                            <el-button type="primary" @click="queryData">查询</el-button>
+                        </el-form-item>
+                    </div>
+                </el-form>
+            </div>
+            <el-table v-loading.body="loading" :data="tableData" border style="width: 100%" @selection-change="selectRows">
+                <el-table-column type="selection" width="50"/>
+                <el-table-column prop="name" label="姓名" align="center" width="120" />
+                <el-table-column prop="age" label="年龄" align="center" width="80" />
+                <el-table-column prop="sex" label="性别" align="center" :formatter="sexFormatter" width="60" />
+                <el-table-column prop="phone" label="手机号" align="center" width="110"  />
+                <el-table-column prop="email" label="邮箱" align="center" width="200"/>
+                <el-table-column prop="createTime" label="创建时间" width="180px" align="center" :formatter="dateFormatter"/>
+                <el-table-column prop="avater" label="头像" align="center" width="60">
+                    <template  slot-scope="scope">
+                        <el-popover trigger="hover" placement="top">
+                            <img :src="scope.row.avater" v-show="scope.row.avater" height="400" width="400"/>
+                            <img v-show="scope.row.avater" slot="reference" :src="scope.row.avater" height="20" width="20"/>
+                        </el-popover>
+                    </template>
+                </el-table-column>
+                <el-table-column prop="deleteFlag" label="状态" align="center" :formatter="deleteFlagFormatter" width="100"/>
+                <el-table-column label="操作" align="center" width="160">
+                    <template slot-scope="scope">
+                        <el-button size="small" type="primary" @click="openUserInfo(1, scope.row)" icon="delete">编辑</el-button>
 
-                    <el-button :disabled="scope.row.deleteFlag != 0" size="small" type="danger" @click="deleteUser(scope.row.id)" icon="delete">删除</el-button>
-                </template>
-            </el-table-column>
-        </el-table>
-        <div class="foot_pagination">
-            <div class="pagination">
-                <el-pagination @size-change="handleSizeChange" @current-change="handleCurrentChange" layout="sizes,total, prev, pager, next, jumper" :page-sizes="[10, 15, 20, 30]" :total="total" :page-size="cur_size">
-                </el-pagination>
+                        <el-button :disabled="scope.row.deleteFlag != 0" size="small" type="danger" @click="deleteUser(scope.row.id)" icon="delete">删除</el-button>
+                    </template>
+                </el-table-column>
+            </el-table>
+            <div class="foot_pagination">
+                <div class="pagination">
+                    <el-pagination @size-change="handleSizeChange" @current-change="handleCurrentChange" layout="sizes,total, prev, pager, next, jumper" :page-sizes="[10, 15, 20, 30]" :total="total" :page-size="cur_size">
+                    </el-pagination>
+                </div>
             </div>
         </div>
-            </div>
         <div style="width:30%;">
             <el-dialog title="用户信息" :visible.sync="userInfoDialog"  :modal="true" center>
                 <el-form ref="userForm" :model="userInfo" :rules="rules">
@@ -226,6 +226,8 @@ export default {
 
         getData(currentPage, currentSize) {
             let self = this;
+
+            console.log('a=' + self.$config.a);
             let data = { page: currentPage, pageSize: currentSize ,name: this.criteria.name, sex: this.criteria.sex};
 
             postData(processUrl(self.env,'users/api/user/userList'), data).
