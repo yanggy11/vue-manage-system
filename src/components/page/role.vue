@@ -1,4 +1,13 @@
 <template>
+    <div class="table">
+        <div class="crumbs">
+
+        </div>
+
+        <div class="container">
+            <div ></div>
+        </div>
+    </div>
 
 </template>
 

@@ -17,10 +17,10 @@
                         </el-form-item>
                     </div>
                     <div>
-                        <el-form-item label="姓名">
+                        <el-form-item label="姓名" :label-width="labelWidth">
                             <el-input v-model="criteria.name" placeholder="姓名"></el-input>
                         </el-form-item>
-                        <el-form-item label="性别">
+                        <el-form-item label="性别" :label-width="labelWidth">
                             <el-select v-model="criteria.sex" placeholder="请选择">
                                 <el-option v-for="item in genders" :label="item.label" :value="item.value" :key="item.label"></el-option>
                             </el-select>
@@ -135,6 +135,7 @@ export default {
             loading: true,
             userInfoDialog: false,
             formLabelWidth: '80px',
+            labelWidth: '60px',
             userInfo: {
                 name:'',
                 age:0,
@@ -456,6 +457,19 @@ export default {
         text-overflow: ellipsis;
         vertical-align: middle;
         position: relative;
+    }
+
+    .el-form-item label {
+        text-align: right;
+        float: left;
+        font-size: 14px;
+        color: #606266;
+        line-height: 40px;
+        padding: 0 12px 0 0;
+        -webkit-box-sizing: border-box;
+        box-sizing: border-box;
+        background-color: aliceblue;
+        text-align: center;
     }
 </style>
 
