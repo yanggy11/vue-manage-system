@@ -7,7 +7,8 @@ import "babel-polyfill";    // 默认主题
 // import '../static/css/theme-green/index.css';       // 浅绿色主题
 import VueResource from "vue-resource";
 import constants from './js/constants';
-const vueConfig = require('vue-config')
+const vueConfig = require('vue-config');
+import {Message} from 'element-ui';
 
 Vue.use(ElementUI);
 Vue.use(VueResource);
@@ -17,18 +18,12 @@ Vue.use(vueConfig, constants);
 Vue.prototype.$env = 'dev';
 Vue.http.options.root = 'http://localhost:1987/';
 Vue.http.interceptors.push((request, next) => {
+    let self = this;
     let token = localStorage.getItem('AuthenticationToken');
     if (token) {
         request.headers.set('Authorization', token);
     }
     next((response) => {
-        let status = response.status;
-        if(200!= status) {
-            Vue.$message({message:response.statusText,
-                type:'error',
-                center: true
-            })
-        }
         return response;
     });
 });

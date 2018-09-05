@@ -81,13 +81,13 @@ const router= new Router({
                     // 资源管理
                     path: '/resources',
                     component: resolve => require(['../components/page/roles.vue'], resolve),
-                    meta: { title: '用户管理', requireAuth: true }
+                    meta: { title: '资源管理', requireAuth: true }
                 },
                 {
                     // 路由管理
                     path: '/routes',
                     component: resolve => require(['../components/page/routes.vue'], resolve),
-                    meta: { title: '用户管理', requireAuth: true }
+                    meta: { title: '路由管理', requireAuth: true }
                 }
             ]
         },
