@@ -111,7 +111,7 @@
 
 <script>
 
-import { formatDate, processUrl } from '../../js/date.js'
+import { formatDate } from '../../js/date.js'
 import {getData, postData,deleteData} from '../../js/baseHttp.js'
 
 export default {
@@ -183,7 +183,7 @@ export default {
             let data = new FormData();
             data.append('file', e.raw);
             //上传图片
-            postData(processUrl(self.env,'users/api/user/uploa'), data).then(function(data){
+            postData('users/user/uploa', data).then(function(data){
                 self.userInfo.avater = data.imgUrl;
             }, function (data) {
                 self.$message({
@@ -230,7 +230,7 @@ export default {
             console.log('a=' + self.$config.a);
             let data = { page: currentPage, pageSize: currentSize ,name: this.criteria.name, sex: this.criteria.sex};
 
-            postData(processUrl(self.env,'users/api/user/userList'), data).
+            postData('users/user/userList', data).
                 then(function(data) {
 
                     self.total = data.totalRecord;
@@ -290,7 +290,7 @@ export default {
 
             console.log(this.userInfo);
             let self = this;
-            postData(processUrl(self.env,'users/api/user/updateUserInfo'), self.userInfo).
+            postData('users/user/updateUserInfo', self.userInfo).
                 then(function(data) {
                     self.userInfoDialog = false;
                     self.getData(self.cur_page, self.cur_size);
@@ -309,7 +309,7 @@ export default {
         addUser() {
 
             let self = this;
-            postData(processUrl(self.env,'users/api/user/register'), self.userInfo,
+            postData('users/user/register', self.userInfo,
                 { headers: { "Authorization": localStorage.getItem("AuthenticationToken") } }).
                 then(function(data) {
                     self.userInfoDialog = false;
@@ -335,7 +335,7 @@ export default {
                 cancelButtonText: '取消',
                 type: 'warning'
             }).then(() => {
-                postData(processUrl(self.env,'users/api/user/delete'), { userId: userId }).
+                postData('users/user/delete', { userId: userId }).
                     then(function(data) {
                         self.$message({
                             type: 'success',
@@ -380,7 +380,7 @@ export default {
                 type: 'warning',
                 center: true
             }).then(() => {
-                deleteData(processUrl(self.env,'users/api/user/deleteAll'),data).then((res)=>{
+                deleteData('users/user/deleteAll',data).then((res)=>{
                         self.$message({
                             type: 'success',
                             message: '删除成功!',

@@ -4,12 +4,14 @@
  */
 
 import Vue from 'vue'
+
 let vue = new Vue()
 
 export function getData(url, params) {
+
     return new Promise((resolve, reject) => {
         vue.$http({
-            url: url,
+            url: vue.$config.api + url,
             params: params,
             method: 'GET'
         }).then(response => {
@@ -21,8 +23,9 @@ export function getData(url, params) {
 }
 
 export function postData(url, body, headers) {
+
     return new Promise((resolve, reject) => {
-        vue.$http.post(url, body
+        vue.$http.post(vue.$config.api + url, body
         ).then(response => {
             resolve(response.body);
         }, response => {
@@ -30,9 +33,13 @@ export function postData(url, body, headers) {
         });
     })
 }
+
 export function deleteData(url, body) {
+
+    url = vue.$config.api + url;
+
     return new Promise((resolve, reject) => {
-        vue.$http.delete(url, {body: body}).then(
+        vue.$http.delete(vue.$config.api + url, {body: body}).then(
             response => {
                 resolve(response);
             },

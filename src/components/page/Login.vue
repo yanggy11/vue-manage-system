@@ -47,7 +47,7 @@
 
                 const self = this;
                 self.loginButtonClick = false;//点击登陆后，禁用登录按钮，
-                postData(processUrl(self.$env,'auth/login'),self.user)
+                postData('auth/login',self.user)
                     .then(function(data) {
 
                         console.log(data)

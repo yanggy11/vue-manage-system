@@ -44,8 +44,7 @@
 </template>
 
 <script>
-    import {getData, postData,deleteData} from '../../js/baseHttp.js'
-    import {formatDate, processUrl} from '../../js/date.js'
+    import {formatDate} from '../../js/date.js'
     export default {
         data() {
             return {

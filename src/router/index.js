@@ -80,7 +80,7 @@ const router= new Router({
                 {
                     // 资源管理
                     path: '/resources',
-                    component: resolve => require(['../components/page/roles.vue'], resolve),
+                    component: resolve => require(['../components/page/resources.vue'], resolve),
                     meta: { title: '资源管理', requireAuth: true }
                 },
                 {
@@ -88,6 +88,12 @@ const router= new Router({
                     path: '/routes',
                     component: resolve => require(['../components/page/routes.vue'], resolve),
                     meta: { title: '路由管理', requireAuth: true }
+                },
+                {
+                    // 角色管理
+                    path: '/routes',
+                    component: resolve => require(['../components/page/role.vue'], resolve),
+                    meta: { title: '角色管理', requireAuth: true }
                 }
             ]
         },

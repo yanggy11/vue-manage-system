@@ -74,7 +74,7 @@
 </template>
 
 <script>
-    import {formatDate, processUrl} from '../../js/date.js'
+    import {formatDate} from '../../js/date.js'
     import {getData, postData, deleteData} from '../../js/baseHttp.js'
 
     export default {
@@ -142,7 +142,7 @@
                     cancelButtonText: '取消',
                     type: 'warning'
                 }).then(() => {
-                    postData(processUrl(self.$env, 'users/resources/deleteResource'), {resourceIds: self.selectedItems}).then(function (data) {
+                    postData( 'users/resources/deleteResource', {resourceIds: self.selectedItems}).then(function (data) {
                         self.$message({
                             message: '已删除！',
                             type: 'success',
@@ -190,7 +190,7 @@
             },
             getData() {
                 let self = this;
-                postData(processUrl(self.$env, 'users/resources/getResourceTrees'), {},).then(function (data) {
+                postData('users/resources/getResourceTrees', {},).then(function (data) {
                     self.resources = data.data;
                     self.selected = data.data;
                     self.loading = false;
@@ -210,7 +210,7 @@
                 self.$refs.resourcesForm.validate(valid => {
                     if (valid) {
                         if (self.resource.id == undefined) {
-                            postData(processUrl(self.$env, 'users/resources/addResource'), this.resource).then(function (data) {
+                            postData('users/resources/addResource', this.resource).then(function (data) {
                                 self.$message({
                                     message: '加载成功！',
                                     type: 'success',
@@ -227,7 +227,7 @@
                                 });
                             });
                         } else {
-                            postData(processUrl(self.$env, 'users/resources/editResource'), self.resource).then(function (data) {
+                            postData('users/resources/editResource', self.resource).then(function (data) {
                                 self.$message({
                                     message: '加载成功！',
                                     type: 'success',
@@ -260,11 +260,6 @@
         width: 70%;
     }
 
-    .criteria {
-        text-align: right;
-        display: flex;
-    }
-
     .table .el-dialog--small {
         width: 30%;
     }
@@ -279,16 +274,6 @@
 
     .table .criteria {
         text-align: right;
-    }
-
-    .foot_pagination {
-        display: flex;
-        justify-content: space-between;
-    }
-
-    .foot_pagination .el-button {
-        margin-bottom: 0px;
-        margin-top: 15px;
     }
 
     .el-form-item label {
