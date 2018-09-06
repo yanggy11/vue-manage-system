@@ -91,7 +91,7 @@ const router= new Router({
                 },
                 {
                     // 角色管理
-                    path: '/routes',
+                    path: '/roles',
                     component: resolve => require(['../components/page/role.vue'], resolve),
                     meta: { title: '角色管理', requireAuth: true }
                 }

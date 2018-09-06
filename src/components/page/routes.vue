@@ -1,29 +1,35 @@
 <template>
     <div class="table">
         <div>
-            <el-form :inline="true"  class="demo-form-inline" style="display:flex; justify-content: space-between;">
+            <el-form :inline="true" class="demo-form-inline" style="display:flex; justify-content: space-between;">
                 <el-form-item>
-                    <el-button type="primary" >新增</el-button>
+                    <el-button type="primary">新增</el-button>
                 </el-form-item>
             </el-form>
         </div>
         <el-table v-loading.body="loading" :data="routes" border style="width: 100%">
-            <el-table-column type="selection"  width="50" fixed></el-table-column>
+            <el-table-column type="selection" width="50" fixed></el-table-column>
             <el-table-column prop="id" label="网关id" align="center" width="100" fixed>
             </el-table-column>
             <el-table-column prop="path" label="网关路径" align="center" width="150" fixed>
             </el-table-column>
             <el-table-column prop="serviceId" label="转发服务" align="center" fixed>
             </el-table-column>
-            <el-table-column prop="stripPrefix" label="前缀" align="center" :formatter="prefixFormatter" width="60" fixed/>
-            <el-table-column prop="retryable" label="重试" align="center" :formatter="retryableFormatter" width="60" fixed/>
+            <el-table-column prop="stripPrefix" label="前缀" align="center" :formatter="prefixFormatter" width="60"
+                             fixed/>
+            <el-table-column prop="retryable" label="重试" align="center" :formatter="retryableFormatter" width="60"
+                             fixed/>
             <el-table-column prop="enabled" label="启用" align="center" :formatter="enabledFormatter" width="60" fixed/>
             <el-table-column prop="createTime" label="创建时间" align="center" :formatter="dateFormatter" fixed/>
             <el-table-column label="操作" align="center" fixed>
                 <template scope="scope">
                     <el-button size="small" icon="delete">编辑</el-button>
-                    <el-button size="small" type="danger" @click="enableOrDisable(scope.row.dynamicId, true)" icon="delete" v-if="scope.row.enabled == false">启用</el-button>
-                    <el-button size="small" type="danger" @click="enableOrDisable(scope.row.dynamicId, false)" icon="delete" v-if="scope.row.enabled">关闭</el-button>
+                    <el-button size="small" type="danger" @click="enableOrDisable(scope.row.dynamicId, true)"
+                               icon="delete" v-if="scope.row.enabled == false">启用
+                    </el-button>
+                    <el-button size="small" type="danger" @click="enableOrDisable(scope.row.dynamicId, false)"
+                               icon="delete" v-if="scope.row.enabled">关闭
+                    </el-button>
                 </template>
             </el-table-column>
         </el-table>
@@ -35,8 +41,8 @@
             </el-form>
             <div class="pagination">
                 <el-pagination @size-change="handleSizeChange" @current-change="handleCurrentChange"
-                layout="sizes,total, prev, pager, next, jumper" :page-sizes="[10, 15, 20, 30]"
-                :total="total" :page-size="cur_size" :current-page="cur_page">
+                               layout="sizes,total, prev, pager, next, jumper" :page-sizes="[10, 15, 20, 30]"
+                               :total="total" :page-size="cur_size" :current-page="cur_page">
                 </el-pagination>
             </div>
         </div>
@@ -45,6 +51,7 @@
 
 <script>
     import {formatDate} from '../../js/date.js'
+
     export default {
         data() {
             return {
@@ -72,21 +79,26 @@
                 console.log(currentPage);
                 console.log(currentSize)
                 let self = this;
-                self.$http.post('users/route/getAllRoutesInPage', { page: currentPage, pageSize: currentSize }, { headers: { "Authorization": localStorage.getItem("AuthenticationToken") } }).then(function(data) {
+                self.$http.post('users/route/getAllRoutesInPage', {
+                    page: currentPage,
+                    pageSize: currentSize
+                }, {headers: {"Authorization": localStorage.getItem("AuthenticationToken")}}).then(function (data) {
                     console.log(data.body);
                     let pageData = data.body;
                     self.total = pageData.totalRecord;
                     self.routes = data.body.data;
                     self.loading = false;
 
-                    this.$message({message:'加载成功！',
-                        type:'success',
-                        center:true
+                    this.$message({
+                        message: '加载成功！',
+                        type: 'success',
+                        center: true
                     });
-                }, function(data) {
-                    this.$message({message:'加载失败！',
-                        type:'error',
-                        center:true
+                }, function (data) {
+                    this.$message({
+                        message: '加载失败！',
+                        type: 'error',
+                        center: true
                     });
                 })
             },
@@ -114,16 +126,21 @@
             enableOrDisable(dynamicId, enabled) {
                 console.log(dynamicId);
                 let self = this;
-                self.$http.post('users/route/disableRoute', {routeId: dynamicId,enabled:enabled }, { headers: { "Authorization": localStorage.getItem("AuthenticationToken") } }).then(function(data) {
-                    this.$message({message:'加载成功！',
-                        type:'success',
-                        center:true
+                self.$http.post('users/route/disableRoute', {
+                    routeId: dynamicId,
+                    enabled: enabled
+                }, {headers: {"Authorization": localStorage.getItem("AuthenticationToken")}}).then(function (data) {
+                    this.$message({
+                        message: '加载成功！',
+                        type: 'success',
+                        center: true
                     });
                     this.getData(this.cur_page, this.cur_size);
-                }, function(data) {
-                    this.$message({message:'加载失败！',
-                        type:'error',
-                        center:true
+                }, function (data) {
+                    this.$message({
+                        message: '加载失败！',
+                        type: 'error',
+                        center: true
                     });
                 });
             }
@@ -162,7 +179,7 @@
     }
 
     .foot_pagination {
-        display:flex;
+        display: flex;
         justify-content: space-between;
     }
 

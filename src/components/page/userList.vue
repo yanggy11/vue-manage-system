@@ -6,7 +6,7 @@
             </el-breadcrumb>
         </div>
         <div class="container">
-            <div>
+            <div class="handle-box">
                 <el-form :inline="true" :model="criteria" class="demo-form-inline" style="display:flex; justify-content: space-between;">
                     <div>
                         <el-form-item>
@@ -63,7 +63,7 @@
                 </div>
             </div>
         </div>
-        <div style="width:30%;">
+        <div style="width:50%;">
             <el-dialog title="用户信息" :visible.sync="userInfoDialog"  :modal="true" center>
                 <el-form ref="userForm" :model="userInfo" :rules="rules">
                     <el-form-item label="姓名" :label-width="formLabelWidth" prop="name">
@@ -381,7 +381,7 @@ export default {
                 type: 'warning',
                 center: true
             }).then(() => {
-                deleteData('users/user/deleteAll',data).then((res)=>{
+                deleteData('users/user/deleteAll', data).then((res) => {
                         self.$message({
                             type: 'success',
                             message: '删除成功!',
@@ -389,7 +389,7 @@ export default {
                         });
                         self.getData(this.cur_page, this.cur_size);
                     },
-                    (res)=>{
+                    (res) => {
                         self.$message({
                             type: 'error',
                             message: '操作失败!',
@@ -459,18 +459,6 @@ export default {
         position: relative;
     }
 
-    .el-form-item label {
-        text-align: right;
-        float: left;
-        font-size: 14px;
-        color: #606266;
-        line-height: 40px;
-        padding: 0 12px 0 0;
-        -webkit-box-sizing: border-box;
-        box-sizing: border-box;
-        background-color: aliceblue;
-        text-align: center;
-    }
 </style>
 
 <style>

@@ -36,15 +36,13 @@ export function postData(url, body, headers) {
 
 export function deleteData(url, body) {
 
-    url = vue.$config.api + url;
-
     return new Promise((resolve, reject) => {
         vue.$http.delete(vue.$config.api + url, {body: body}).then(
             response => {
-                resolve(response);
+                resolve(response.body);
             },
             response => {
-                reject(response);
+                reject(response.body);
             }
         );
     })

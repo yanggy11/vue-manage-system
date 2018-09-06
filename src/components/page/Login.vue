@@ -7,7 +7,7 @@
                     <el-input v-model="user.name" placeholder="username"/>
                 </el-form-item>
                 <el-form-item prop="password">
-                    <el-input type="password" placeholder="password" v-model="user.password" />
+                    <el-input type="password" placeholder="password" v-model="user.password"/>
                 </el-form-item>
                 <div class="login-btn">
                     <el-button type="primary" @click="login('ruleForm')">登录</el-button>
@@ -23,7 +23,7 @@
     import {processUrl} from '../../js/date'
 
     export default {
-        data: function(){
+        data: function () {
             return {
                 user: {
                     name: '',
@@ -31,10 +31,10 @@
                 },
                 rules: {
                     name: [
-                        { required: true, message: '请输入用户名', trigger: 'blur' }
+                        {required: true, message: '请输入用户名', trigger: 'blur'}
                     ],
                     password: [
-                        { required: true, message: '请输入密码', trigger: 'blur' }
+                        {required: true, message: '请输入密码', trigger: 'blur'}
                     ]
                 },
                 attr: {
@@ -47,19 +47,19 @@
 
                 const self = this;
                 self.loginButtonClick = false;//点击登陆后，禁用登录按钮，
-                postData('auth/login',self.user)
-                    .then(function(data) {
+                postData('auth/login', self.user)
+                    .then(function (data) {
 
                         console.log(data)
                         let user = data.data.user;
-                        localStorage.setItem("AuthenticationToken",data.data.token);
-                        localStorage.setItem("username",user.username);
-                        localStorage.setItem("userId",user.userId);
-                        localStorage.setItem("avater",user.avater);
+                        localStorage.setItem("AuthenticationToken", data.data.token);
+                        localStorage.setItem("username", user.username);
+                        localStorage.setItem("userId", user.userId);
+                        localStorage.setItem("avater", user.avater);
                         self.$router.push('/dashboard');
 
                         self.loginButtonClick = true;//登录成功后放开登录按钮
-                    },function(data) {
+                    }, function (data) {
                         console.log(data);
                         self.$message({
                             message: '登录失败',
@@ -75,37 +75,41 @@
 </script>
 
 <style scoped>
-    .login-wrap{
+    .login-wrap {
         position: relative;
-        width:100%;
-        height:100%;
+        width: 100%;
+        height: 100%;
     }
-    .ms-title{
+
+    .ms-title {
         position: absolute;
-        top:50%;
-        width:100%;
+        top: 50%;
+        width: 100%;
         margin-top: -230px;
         text-align: center;
-        font-size:30px;
+        font-size: 30px;
         color: #fff;
 
     }
-    .ms-login{
+
+    .ms-login {
         position: absolute;
-        left:50%;
-        top:50%;
-        width:300px;
-        height:160px;
-        margin:-150px 0 0 -190px;
-        padding:40px;
+        left: 50%;
+        top: 50%;
+        width: 300px;
+        height: 160px;
+        margin: -150px 0 0 -190px;
+        padding: 40px;
         border-radius: 5px;
         background: #fff;
     }
-    .login-btn{
+
+    .login-btn {
         text-align: center;
     }
-    .login-btn button{
-        width:100%;
-        height:36px;
+
+    .login-btn button {
+        width: 100%;
+        height: 36px;
     }
 </style>

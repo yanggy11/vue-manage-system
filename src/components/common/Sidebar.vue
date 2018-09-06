@@ -57,6 +57,9 @@
                             },{
                                 index: 'routes',
                                 title: '路由管理'
+                            },{
+                                index: 'roles',
+                                title: '角色管理'
                             }
                         ]
                     },
