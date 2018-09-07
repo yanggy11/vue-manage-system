@@ -12,10 +12,10 @@
                          style="display:flex; justify-content: space-between;">
                     <div>
                         <el-form-item>
-                            <el-button @click="openRoleInfo(2)" type="primary">新增</el-button>
+                            <el-button @click="openRoleInfo(2)" size="small" type="primary">新增</el-button>
                         </el-form-item>
                         <el-form-item>
-                            <el-button @click="deleteRole([])" type="primary">批量删除</el-button>
+                            <el-button @click="deleteRole([])" size="small" type="primary">批量删除</el-button>
                         </el-form-item>
                     </div>
                     <div>
@@ -26,13 +26,13 @@
                             <el-input v-model="criteria.role"></el-input>
                         </el-form-item>
                         <el-form-item>
-                            <el-button type="primary" @click="getRoles">查询</el-button>
+                            <el-button type="primary" size="small" @click="getRoles">查询</el-button>
                         </el-form-item>
                     </div>
                 </el-form>
             </div>
             <el-table :data="roles" border style="width: 100%" @selection-change="selectRows">
-                <el-table-column type="selection" width="50"/>
+                <el-table-column type="selection" width="50" align="center"/>
                 <el-table-column prop="id" label="id" align="center"/>
                 <el-table-column prop="role" label="角色" align="center"/>
                 <el-table-column prop="roleName" label="角色名称" align="center"/>
@@ -65,8 +65,11 @@
                     <el-form-item label="备注" :label-width="labelWidth" prop="remark">
                         <el-input v-model="roleInfo.remark" auto-complete="off"/>
                     </el-form-item>
+                </el-form>
 
-                    <el-form-item label="资源列表">
+                <el-container class="el-container1">
+                    <el-header class="header" style="height: 40px;">资源</el-header>
+                    <el-main class="main">
                         <el-tree
                             style="border: 1px lightgray"
                             :data="resources"
@@ -74,11 +77,13 @@
                             show-checkbox
                             node-key="id"
                             ref="tree"
+                            @check="selectResources"
                             :default-expanded-keys="[1]"
-                            :expand-on-click-node="false">
+                            :expand-on-click-node="false"
+                            :default-checked-keys="defaultChecked">
                         </el-tree>
-                    </el-form-item>
-                </el-form>
+                    </el-main>
+                </el-container>
                 <div slot="footer" class="dialog-footer">
                     <el-button @click="cancelDialog">取 消</el-button>
                     <el-button type="primary" :disabled="roleFormDisabled" @click="saveRoleInfo">确 定
@@ -112,7 +117,6 @@
                     roleName: '',
                     role: '',
                 },
-                selected: [],
                 roles: [],
                 rules: {
                     role: [{
@@ -138,14 +142,22 @@
                 },
                 selectedItems: [],
                 roleInfoDialog: false,
-                roleFormDisabled: false
+                roleFormDisabled: false,
+                selectedResourcesIds: [],
+                defaultChecked: []
             }
         },
 
         created() {
             this.getRoles();
+            this.getResources();
         },
         methods: {
+            selectResources(data, checked) {
+
+                let self = this;
+                self.selectedResourcesIds = checked.checkedKeys;
+            },
             getRoles() {
                 let self = this;
                 let criteria = self.criteria;
@@ -154,17 +166,7 @@
 
                 postData(self.$config.role_url.get_roles_by_page, criteria).then(response => {
                     if (self.$config.OK == response.status) {
-                        console.log(response.data);
                         self.roles = response.data;
-                        // self.selected =
-
-                        let len = self.roles.resources;
-
-                        for (let i = 0; i < len; i++) {
-                            self.selected.push(self.roles.resources[i].id);
-                        }
-
-                        console.log(self.selected);
                     } else {
                         self.$message.error(response.msg);
                     }
@@ -175,11 +177,11 @@
             openRoleInfo(flag, row) {
                 let self = this;
                 self.roleInfoDialog = true;
-                self.getResources();
 
                 if (1 === flag) {
                     self.roleInfo = row;
-
+                    self.defaultChecked = self.resourcesIds;
+                    self.$refs.tree.setCheckedKeys(self.resourcesIds);
                     return;
                 }
 
@@ -195,7 +197,6 @@
 
                     console.log(self.resources)
                     self.resources = data.data;
-                    self.selected = self.selected;
                 }, function (data) {
 
                     console.log(data)
@@ -219,11 +220,15 @@
                 let self = this;
                 self.roleInfoDialog = false;
                 self.$refs.roleForm.resetFields();
+                self.defaultChecked = [];
             },
             saveRoleInfo() {
                 let self = this;
                 self.$refs.roleForm.validate(valid => {
                     if (valid) {
+                        self.roleInfo.resourcesIds = self.selectedResourcesIds;
+
+                        console.log(self.roleInfo)
                         if (undefined == self.roleInfo.id) {
                             postData(self.$config.role_url.add_role_url, self.roleInfo).then(response => {
                                 self.$message({
@@ -308,20 +313,63 @@
     }
 </script>
 
+<style scoped>
+
+</style>
+
 <style>
-    .el-table td, .el-table th {
-        padding: 2px 0;
-        min-width: 0;
+    body > .el-container {
+        margin-bottom: 40px;
+    }
+    .el-input__inner {
+        -webkit-appearance: none;
+        background-color: #fff;
+        background-image: none;
+        border-radius: 4px;
+        border: 1px solid #dcdfe6;
         -webkit-box-sizing: border-box;
         box-sizing: border-box;
-        -o-text-overflow: ellipsis;
-        text-overflow: ellipsis;
-        vertical-align: middle;
-        position: relative;
+        color: #606266;
+        display: inline-block;
+        font-size: inherit;
+        height: 40px;
+        line-height: 40px;
+        outline: 0;
+        padding: 0 15px;
+        -webkit-transition: border-color .2s cubic-bezier(.645, .045, .355, 1);
+        -o-transition: border-color .2s cubic-bezier(.645, .045, .355, 1);
+        transition: border-color .2s cubic-bezier(.645, .045, .355, 1);
     }
 
     .el-dialog__header {
         padding: 10px 10px 10px;
         background-color: aliceblue;
+    }
+
+    .container {
+        padding: 15px;
+        background: #fff;
+        border: 1px solid #ddd;
+        border-radius: 5px;
+        margin-left: 15px;
+    }
+
+    .el-main {
+        background-color: #E9EEF3;
+        color: #333;
+        text-align: center;
+        line-height: 160px;
+        padding: 5px;
+    }
+
+    .el-header {
+        background-color: #B3C0D1;
+        color: #333;
+        text-align: center;
+        line-height: 60px;
+    }
+
+    .el-container{
+        margin-bottom: 40px;
     }
 </style>

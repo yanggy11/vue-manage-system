@@ -3,7 +3,7 @@
         <div>
             <el-form :inline="true" class="demo-form-inline" style="display:flex; justify-content: space-between;">
                 <el-form-item>
-                    <el-button type="primary">新增</el-button>
+                    <el-button size="small" type="primary">新增</el-button>
                 </el-form-item>
             </el-form>
         </div>
@@ -36,7 +36,7 @@
         <div class="foot_pagination">
             <el-form>
                 <el-form-item>
-                    <el-button type="primary">批量删除</el-button>
+                    <el-button size="small" type="primary">批量删除</el-button>
                 </el-form-item>
             </el-form>
             <div class="pagination">
@@ -51,6 +51,7 @@
 
 <script>
     import {formatDate} from '../../js/date.js'
+    import {postData, deleteData, getData} from '../../js/baseHttp'
 
     export default {
         data() {
@@ -76,20 +77,17 @@
                 this.getData(val, this.cur_size);
             },
             getData(currentPage, currentSize) {
-                console.log(currentPage);
-                console.log(currentSize)
                 let self = this;
-                self.$http.post('users/route/getAllRoutesInPage', {
+                postData('users/route/getAllRoutesInPage', {
                     page: currentPage,
                     pageSize: currentSize
-                }, {headers: {"Authorization": localStorage.getItem("AuthenticationToken")}}).then(function (data) {
-                    console.log(data.body);
-                    let pageData = data.body;
-                    self.total = pageData.totalRecord;
-                    self.routes = data.body.data;
+                }).then(function (data) {
+                    console.log(data);
+                    self.total = data.totalRecord;
+                    self.routes = data.data;
                     self.loading = false;
 
-                    this.$message({
+                    self.$message({
                         message: '加载成功！',
                         type: 'success',
                         center: true
@@ -126,18 +124,18 @@
             enableOrDisable(dynamicId, enabled) {
                 console.log(dynamicId);
                 let self = this;
-                self.$http.post('users/route/disableRoute', {
+                postData('users/route/disableRoute', {
                     routeId: dynamicId,
                     enabled: enabled
-                }, {headers: {"Authorization": localStorage.getItem("AuthenticationToken")}}).then(function (data) {
-                    this.$message({
+                }).then(function (data) {
+                    self.$message({
                         message: '加载成功！',
                         type: 'success',
                         center: true
                     });
-                    this.getData(this.cur_page, this.cur_size);
+                    self.getData(this.cur_page, this.cur_size);
                 }, function (data) {
-                    this.$message({
+                    self.$message({
                         message: '加载失败！',
                         type: 'error',
                         center: true

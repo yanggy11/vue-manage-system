@@ -66,12 +66,6 @@ const router= new Router({
                     meta: { title: '拖拽列表' ,requireAuth: true}
                 },
                 {
-                    // 权限页面
-                    path: '/permission',
-                    component: resolve => require(['../components/page/Permission.vue'], resolve),
-                    meta: { title: '权限测试', requireAuth: true }
-                },
-                {
                     // 用户管理
                     path: '/usersList',
                     component: resolve => require(['../components/page/userList.vue'], resolve),

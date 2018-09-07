@@ -13,6 +13,7 @@
 <script>
 
     import {formatDate} from '../../js/date.js'
+    import {postData, deleteData, getData} from "../../js/baseHttp";
 
     export default {
         data() {
@@ -38,10 +39,8 @@
                 this.getData(val, this.cur_size);
             },
             getData(currentPage, currentSize) {
-                console.log(currentPage);
-                console.log(currentSize)
                 let self = this;
-                self.$http.post('http://localhost:1987' + '/users/menu/getAllMenus',
+                postData('users/menu/getAllMenus',
                     {page: currentPage, pageSize: currentSize},
                     {headers: {"Authorization": localStorage.getItem("AuthenticationToken")}}).then(function (data) {
                     let pageData = data.body;
@@ -49,9 +48,9 @@
                     self.menus = data.body.data;
                     self.loading = false;
 
-                    this.$message.success("成功加载菜单列表！");
+                    self.$message.success("成功加载菜单列表！");
                 }, function (data) {
-                    this.$$message.error("加载失败!");
+                    self.$$message.error("加载失败!");
                 })
             },
             dateFormatter(row) {
@@ -78,14 +77,14 @@
             enableOrDisable(dynamicId, enabled) {
                 console.log(dynamicId);
                 let self = this;
-                self.$http.post('http://localhost:1987' + '/users/route/disableRoute', {
+                postData('users/route/disableRoute', {
                     routeId: dynamicId,
                     enabled: enabled
                 }, {headers: {"Authorization": localStorage.getItem("AuthenticationToken")}}).then(function (data) {
-                    this.$message.success("操作成功！");
-                    this.getData(this.cur_page, this.cur_size);
+                    self.$message.success("操作成功！");
+                    self.getData(self.cur_page, self.cur_size);
                 }, function (data) {
-                    this.$$message.error("操作失败!");
+                    self.$$message.error("操作失败!");
                 });
             }
         }
