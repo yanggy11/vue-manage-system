@@ -142,7 +142,7 @@
                     cancelButtonText: '取消',
                     type: 'warning'
                 }).then(() => {
-                    postData( 'users/resources/deleteResource', {resourceIds: self.selectedItems}).then(function (data) {
+                    postData( self.$config.resources_url.delete_resources_url, {resourceIds: self.selectedItems}).then(function (data) {
                         self.$message({
                             message: '已删除！',
                             type: 'success',
@@ -190,7 +190,7 @@
             },
             getData() {
                 let self = this;
-                postData('users/resources/getResourceTrees', {},).then(function (data) {
+                postData(self.$config.resources_url.get_resources_url, {},).then(function (data) {
                     self.resources = data.data;
                     self.selected = data.data;
                     self.loading = false;
@@ -210,7 +210,7 @@
                 self.$refs.resourcesForm.validate(valid => {
                     if (valid) {
                         if (self.resource.id == undefined) {
-                            postData('users/resources/addResource', this.resource).then(function (data) {
+                            postData(self.$config.resources_url.add_resources_url, this.resource).then(function (data) {
                                 self.$message({
                                     message: '加载成功！',
                                     type: 'success',
@@ -227,7 +227,7 @@
                                 });
                             });
                         } else {
-                            postData('users/resources/editResource', self.resource).then(function (data) {
+                            postData(self.$config.resources_url.edit_resources_url, self.resource).then(function (data) {
                                 self.$message({
                                     message: '加载成功！',
                                     type: 'success',

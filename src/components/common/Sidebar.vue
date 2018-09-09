@@ -65,7 +65,7 @@
                     },
                     {
                         icon: 'el-icon-message',
-                        index: 'tabs',
+                        index: 'rabbitMsg',
                         title: '消息管理'
                     },
                     {

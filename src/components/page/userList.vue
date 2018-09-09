@@ -74,24 +74,33 @@
                 </div>
             </div>
         </div>
-        <div style="width:50%;">
-            <el-dialog title="用户信息" :visible.sync="userInfoDialog" :modal="true" center>
+        <div style="width:40%;">
+            <el-dialog title="用户信息" :visible.sync="userInfoDialog" center>
                 <el-form ref="userForm" :model="userInfo" :rules="rules">
-                    <el-form-item label="姓名" :label-width="formLabelWidth" prop="name">
-                        <el-input v-model="userInfo.name" auto-complete="off"/>
-                    </el-form-item>
-                    <el-form-item label="年龄" :label-width="formLabelWidth" prop="age">
-                        <el-input v-model="userInfo.age" auto-complete="off"/>
-                    </el-form-item>
-                    <el-form-item label="手机号" :label-width="formLabelWidth" prop="phone">
-                        <el-input v-model="userInfo.phone" auto-complete="off"/>
-                    </el-form-item>
-                    <el-form-item label="邮箱" :label-width="formLabelWidth" prop="email">
-                        <el-input v-model="userInfo.email" auto-complete="off"/>
-                    </el-form-item>
-                    <el-form-item label="密码" :label-width="formLabelWidth" v-if="userInfo.id == undefined">
-                        <el-input type="password" v-model="userInfo.password" auto-complete="off"/>
-                    </el-form-item>
+                    <el-row :gutter="20">
+                        <el-col :span="12">
+                            <el-form-item label="姓名" :label-width="formLabelWidth" prop="name">
+                                <el-input v-model="userInfo.name" auto-complete="off"/>
+                            </el-form-item>
+                        </el-col>
+                        <el-col :span="12">
+                            <el-form-item label="年龄" :label-width="formLabelWidth" prop="age">
+                                <el-input v-model="userInfo.age" auto-complete="off"/>
+                            </el-form-item>
+                        </el-col>
+                    </el-row>
+                    <el-row :gutter="20">
+                        <el-col :span="12">
+                            <el-form-item label="手机号" :label-width="formLabelWidth" prop="phone">
+                                <el-input v-model="userInfo.phone" auto-complete="off"/>
+                            </el-form-item>
+                        </el-col>
+                        <el-col :span="12">
+                            <el-form-item label="邮箱" :label-width="formLabelWidth" prop="email">
+                                <el-input v-model="userInfo.email" auto-complete="off"/>
+                            </el-form-item>
+                        </el-col>
+                    </el-row>
                     <el-form-item label="性别" :label-width="formLabelWidth">
                         <el-radio v-model="userInfo.sex" class="radio" :label="1">女</el-radio>
                         <el-radio v-model="userInfo.sex" class="radio" :label="0">男</el-radio>
@@ -106,7 +115,7 @@
                             :auto-upload="false"
                             :on-change="setImage"
                             :before-upload="beforeAvatarUpload">
-                            <img v-if="userInfo.avater" :src="userInfo.avater" class="avatar">
+                            <img v-if="userInfo.avater" :src="userInfo.avater" class="avatar"/>
                             <i v-else class="el-icon-plus avatar-uploader-icon"></i>
                         </el-upload>
                     </el-form-item>
@@ -124,18 +133,15 @@
 <script>
 
     import {formatDate} from '../../js/date.js'
-    import {getData, postData, deleteData} from '../../js/baseHttp.js'
+    import {postData, deleteData} from '../../js/baseHttp.js'
 
     export default {
         data() {
             var checkAge = (rule, value, callback) => {
-
-                if (!value) {
-                    return callback(new Error('年龄不能为空'));
-                }
-
                 if (!/^\d+$/.test(value)) {
                     callback(new Error('请输入整数值'));
+                } else {
+                    callback();
                 }
 
             };
@@ -153,7 +159,7 @@
                     age: 0,
                     phone: '',
                     email: '',
-                    sex: '1',
+                    sex: '0',
                     avater: ''
                 },
                 userFormDisabled: false,
@@ -165,13 +171,14 @@
                     label: "女"
                 }],
                 criteria: {
-                    gender: ''
+                    gender: '0'
                 },
+                sex: '1',
                 rules: {
                     name: [{required: true, message: '姓名不能为空', trigger: 'blur'},
                         {min: 3, max: 10, message: '长度在3-10个字符之间', trigger: 'change'}
                     ],
-                    age: [{required: true, message: '请输入年龄'}, {validator: checkAge}],
+                    age: [{required: true, message: '请输入年龄'}, {validator: checkAge, trigger: 'change'}],
 
                     phone: [
                         {required: true, message: '请输入手机号', trigger: 'blur'},
@@ -196,8 +203,9 @@
                 let data = new FormData();
                 data.append('file', e.raw);
                 //上传图片
-                postData('users/user/uploa', data).then(function (data) {
-                    self.userInfo.avater = data.imgUrl;
+                postData(self.$config.user_url.user_upload_url, data).then(function (data) {
+                    console.log(data)
+                    self.userInfo.avater = data.data;
                 }, function (data) {
                     self.$message({
                         message: '上传错误',
@@ -240,10 +248,9 @@
             getData(currentPage, currentSize) {
                 let self = this;
 
-                console.log('a=' + self.$config.a);
                 let data = {page: currentPage, pageSize: currentSize, name: this.criteria.name, sex: this.criteria.sex};
 
-                postData('users/user/userList', data).then(function (data) {
+                postData(self.$config.user_url.user_list_url, data).then(function (data) {
 
                     self.total = data.totalRecord;
                     self.tableData = data.data;
@@ -278,34 +285,47 @@
                 let self = this;
                 self.userInfoDialog = true;
                 self.userFormDisabled = false;
-                if(1 === flag) {
+                if (0 === flag) {
+                    self.userInfo = {
+                        name: '',
+                        age: 0,
+                        phone: '',
+                        email: '',
+                        sex: 0,
+                        avater: ''
+                    };
+
+                    return;
+                }
+
+                if (1 === flag) {
                     self.userInfo = row;
-                }else {
-                    self.userInfo = {};
+
+                    return;
                 }
             },
             saveUserInfo(userForm) {
 
                 let self = this;
 
-           self.userFormDisabled = true;
-           self.$refs.userForm.validate(valid => {
-
-               console.log(valid);
-               if(valid) {
-                if (this.userInfo.id == undefined) {
-                    this.addUser();
-                } else {
-                    this.updateUser();
-                }
-               }
-           });
+                self.userFormDisabled = true;
+                self.$refs.userForm.validate(valid => {
+                    if (valid) {
+                        if (this.userInfo.id == undefined) {
+                            this.addUser();
+                        } else {
+                            this.updateUser();
+                        }
+                    } else {
+                        self.userFormDisabled = false;
+                    }
+                });
             },
             updateUser() {
 
                 console.log(this.userInfo);
                 let self = this;
-                postData('users/user/updateUserInfo', self.userInfo).then(function (data) {
+                postData(self.$config.user_url.user_edit_url, self.userInfo).then(function (data) {
                     self.userInfoDialog = false;
                     self.getData(self.cur_page, self.cur_size);
                     self.$message({
@@ -325,7 +345,7 @@
             addUser() {
 
                 let self = this;
-                postData('users/user/register', self.userInfo,
+                postData(self.$config.user_url.user_add_url, self.userInfo,
                     {headers: {"Authorization": localStorage.getItem("AuthenticationToken")}}).then(function (data) {
                     self.userInfoDialog = false;
                     self.$message({
@@ -351,7 +371,7 @@
                     cancelButtonText: '取消',
                     type: 'warning'
                 }).then(() => {
-                    postData('users/user/delete', {userId: userId}).then(function (data) {
+                    postData(self.$config.user_url.user_delete_url, {userId: userId}).then(function (data) {
                         self.$message({
                             type: 'success',
                             message: '删除成功!',
@@ -396,7 +416,7 @@
                     type: 'warning',
                     center: true
                 }).then(() => {
-                    deleteData('users/user/deleteAll', data).then((res) => {
+                    deleteData(self.$config.user_url.user_delete_all_url, data).then((res) => {
                             self.$message({
                                 type: 'success',
                                 message: '删除成功!',
@@ -426,7 +446,7 @@
     }
 </script>
 
-<style scope>
+<style scoped>
     .avatar-uploader .el-upload {
         border: 1px dashed #d9d9d9;
         border-radius: 6px;
@@ -453,6 +473,28 @@
         height: 178px;
         display: block;
     }
+</style>
+
+<style>
+    .el-input__inner {
+        -webkit-appearance: none;
+        background-color: #fff;
+        background-image: none;
+        border-radius: 4px;
+        border: 1px solid #dcdfe6;
+        -webkit-box-sizing: border-box;
+        box-sizing: border-box;
+        color: #606266;
+        display: inline-block;
+        font-size: inherit;
+        height: 35px;
+        line-height: 40px;
+        outline: 0;
+        padding: 0 15px;
+        -webkit-transition: border-color .2s cubic-bezier(.645, .045, .355, 1);
+        -o-transition: border-color .2s cubic-bezier(.645, .045, .355, 1);
+        transition: border-color .2s cubic-bezier(.645, .045, .355, 1);
+    }
 
     .el-upload--text {
         background-color: #fff;
@@ -473,5 +515,10 @@
         background: #fff;
         border: 1px solid #ddd;
         border-radius: 5px;
+    }
+
+    .el-dialog__header {
+        padding: 10px 10px 10px;
+        background-color: aliceblue;
     }
 </style>

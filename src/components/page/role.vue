@@ -53,9 +53,9 @@
             </div>
         </div>
 
-        <div style="width:30%;">
-            <el-dialog title="角色信息" :visible.sync="roleInfoDialog" :modal="true" center>
-                <el-form ref="roleForm" :model="roleInfo" :rules="rules">
+        <div style="width:30%;" >
+            <el-dialog title="角色信息" :visible="roleInfoDialog" :modal="true" center>
+                <el-form ref="roleForm" :model="roleInfo" :rules="rules" :inline="true">
                     <el-form-item label="角色" :label-width="labelWidth" prop="role">
                         <el-input v-model="roleInfo.role" auto-complete="off"/>
                     </el-form-item>
@@ -65,11 +65,8 @@
                     <el-form-item label="备注" :label-width="labelWidth" prop="remark">
                         <el-input v-model="roleInfo.remark" auto-complete="off"/>
                     </el-form-item>
-                </el-form>
 
-                <el-container class="el-container1">
-                    <el-header class="header" style="height: 40px;">资源</el-header>
-                    <el-main class="main">
+                    <el-form-item>
                         <el-tree
                             style="border: 1px lightgray"
                             :data="resources"
@@ -82,8 +79,8 @@
                             :expand-on-click-node="false"
                             :default-checked-keys="defaultChecked">
                         </el-tree>
-                    </el-main>
-                </el-container>
+                    </el-form-item>
+                </el-form>
                 <div slot="footer" class="dialog-footer">
                     <el-button @click="cancelDialog">取 消</el-button>
                     <el-button type="primary" :disabled="roleFormDisabled" @click="saveRoleInfo">确 定
@@ -177,13 +174,16 @@
             openRoleInfo(flag, row) {
                 let self = this;
                 self.roleInfoDialog = true;
+                    if (1 === flag) {
+                        console.log(row)
+                        self.roleInfo = row;
+                        self.defaultChecked = row.resourcesId;
 
-                if (1 === flag) {
-                    self.roleInfo = row;
-                    self.defaultChecked = self.resourcesIds;
-                    self.$refs.tree.setCheckedKeys(self.resourcesIds);
-                    return;
-                }
+                        console.log(self.defaultChecked)
+
+                        return;
+                    };
+
 
                 if (2 === flag) {
                     self.roleInfo = {};
@@ -197,6 +197,8 @@
 
                     console.log(self.resources)
                     self.resources = data.data;
+
+                    console.log(self.resources)
                 }, function (data) {
 
                     console.log(data)
@@ -223,6 +225,7 @@
                 self.defaultChecked = [];
             },
             saveRoleInfo() {
+
                 let self = this;
                 self.$refs.roleForm.validate(valid => {
                     if (valid) {
@@ -313,10 +316,6 @@
     }
 </script>
 
-<style scoped>
-
-</style>
-
 <style>
     body > .el-container {
         margin-bottom: 40px;
@@ -332,7 +331,7 @@
         color: #606266;
         display: inline-block;
         font-size: inherit;
-        height: 40px;
+        height: 35px;
         line-height: 40px;
         outline: 0;
         padding: 0 15px;
@@ -352,24 +351,5 @@
         border: 1px solid #ddd;
         border-radius: 5px;
         margin-left: 15px;
-    }
-
-    .el-main {
-        background-color: #E9EEF3;
-        color: #333;
-        text-align: center;
-        line-height: 160px;
-        padding: 5px;
-    }
-
-    .el-header {
-        background-color: #B3C0D1;
-        color: #333;
-        text-align: center;
-        line-height: 60px;
-    }
-
-    .el-container{
-        margin-bottom: 40px;
     }
 </style>

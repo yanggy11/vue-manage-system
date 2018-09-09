@@ -78,7 +78,7 @@
             },
             getData(currentPage, currentSize) {
                 let self = this;
-                postData('users/route/getAllRoutesInPage', {
+                postData(self.$config.routes_url.get_routes_url, {
                     page: currentPage,
                     pageSize: currentSize
                 }).then(function (data) {
@@ -124,7 +124,7 @@
             enableOrDisable(dynamicId, enabled) {
                 console.log(dynamicId);
                 let self = this;
-                postData('users/route/disableRoute', {
+                postData(self.$config.routes_url.routes_disable_url, {
                     routeId: dynamicId,
                     enabled: enabled
                 }).then(function (data) {

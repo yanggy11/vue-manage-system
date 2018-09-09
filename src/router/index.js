@@ -26,8 +26,8 @@ const router= new Router({
                     meta: { title: '基础表格' ,requireAuth: true}
                 },
                 {
-                    path: '/tabs',
-                    component: resolve => require(['../components/page/Tabs.vue'], resolve),
+                    path: '/rabbitMsg',
+                    component: resolve => require(['../components/page/rabbitMsg.vue'], resolve),
                     meta: { title: 'tab选项卡' ,requireAuth: true}
                 },
                 {
@@ -46,12 +46,6 @@ const router= new Router({
                     path: '/markdown',
                     component: resolve => require(['../components/page/Markdown.vue'], resolve),
                     meta: { title: 'markdown编辑器' ,requireAuth: true}
-                },
-                {
-                    // 图片上传组件
-                    path: '/upload',
-                    component: resolve => require(['../components/page/Upload.vue'], resolve),
-                    meta: { title: '文件上传' ,requireAuth: true}
                 },
                 {
                     // vue-schart组件
