@@ -38,5 +38,8 @@ export default {
         get_msg_url: 'users/rabbit/msg/getRabbitMsg',
         delete_msg_url: '',
         send_msg_url: ''
+    },
+    time_format: {
+        date_time_format: 'yyyy-MM-dd hh:mm:ss'
     }
 };

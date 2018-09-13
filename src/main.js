@@ -4,15 +4,15 @@ import router from "./router";
 import ElementUI from "element-ui";
 import "element-ui/lib/theme-chalk/index.css";
 import "babel-polyfill"; // 默认主题
-// import '../static/css/theme-green/index.css';       // 浅绿色主题
 import VueResource from "vue-resource";
 import constants from './js/constants';
-
+import TreeView from "vue-json-tree-view"
 const vueConfig = require('vue-config');
 
 Vue.use(ElementUI);
 Vue.use(VueResource);
 Vue.use(vueConfig, constants);
+Vue.use(TreeView)
 
 
 Vue.prototype.$env = 'dev';

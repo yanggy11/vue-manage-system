@@ -16,7 +16,7 @@
                 <!-- 消息中心 -->
                 <div class="btn-bell">
                     <el-tooltip effect="dark" :content="message?`有${message}条未读消息`:`消息中心`" placement="bottom">
-                        <router-link to="/tabs">
+                        <router-link to="/rabbitMsg">
                             <i class="el-icon-bell"></i>
                         </router-link>
                     </el-tooltip>
@@ -25,12 +25,14 @@
                 <!-- 用户头像 -->
                 <div class="user-avator"><img :src="avater"></div>
                 <!-- 用户名下拉菜单 -->
-                <el-dropdown class="user-name" trigger="click" @command="handleCommand">
+                <el-dropdown class="user-name" trigger="hover" @command="handleCommand">
                     <span class="el-dropdown-link">
                         {{username}} <i class="el-icon-caret-bottom"></i>
                     </span>
                     <el-dropdown-menu slot="dropdown">
                         <el-dropdown-item divided  command="loginout">退出登录</el-dropdown-item>
+                        <el-dropdown-item divided  command="loginout">修改密码</el-dropdown-item>
+                        <el-dropdown-item divided  command="loginout">编辑资料</el-dropdown-item>
                     </el-dropdown-menu>
                 </el-dropdown>
             </div>

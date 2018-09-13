@@ -19,6 +19,8 @@
     "vue": "^2.5.17",
     "vue-config": "^1.0.0",
     "vue-cropperjs": "^2.2.0",
+    "vue-json-editor": "^1.2.3",
+    "vue-json-tree-view": "^2.1.4",
     "vue-quill-editor": "3.0.6",
     "vue-resource": "^1.5.1",
     "vue-router": "^3.0.1",

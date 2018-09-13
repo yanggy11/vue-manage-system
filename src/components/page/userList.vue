@@ -119,6 +119,18 @@
                             <i v-else class="el-icon-plus avatar-uploader-icon"></i>
                         </el-upload>
                     </el-form-item>
+                    <el-form-item label="角色列表" :label-width="formLabelWidth">
+                        <el-transfer
+                            v-model="selectedRoles"
+                            :titles="['全部角色', '用户角色']"
+                            :format="{
+                                noChecked: '${total}',
+                                hasChecked: '${checked}/${total}'
+                            }"
+                            :props="transferProps"
+                            :data="all_roles">
+                        </el-transfer>
+                    </el-form-item>
                 </el-form>
                 <div slot="footer" class="dialog-footer">
                     <el-button @click="userInfoDialog = false">取 消</el-button>
@@ -162,6 +174,7 @@
                     sex: '0',
                     avater: ''
                 },
+                image:'',
                 userFormDisabled: false,
                 genders: [{
                     value: "0",
@@ -190,7 +203,14 @@
                         }
                     ]
                 },
-                selectedItems: []
+                selectedItems: [],
+                all_roles: [],
+                selectedRoles: [],
+                transferProps: {
+                    key: 'id',
+                    label: 'role',
+                    disabled : 'disabled'
+                }
             }
         },
         created() {
@@ -256,6 +276,12 @@
                     self.tableData = data.data;
                     self.loading = false;
 
+                    postData('users/user/base64',{}).then(res => {
+                        self.image = res.data;
+                    }, res => {
+
+                    })
+
                 }, function (data) {
 
                     self.$message({
@@ -285,6 +311,8 @@
                 let self = this;
                 self.userInfoDialog = true;
                 self.userFormDisabled = false;
+
+                self.getRoles();
                 if (0 === flag) {
                     self.userInfo = {
                         name: '',
@@ -294,12 +322,24 @@
                         sex: 0,
                         avater: ''
                     };
+                    self.all_roles = [];
+                    self.selectedRoles = [];
 
                     return;
                 }
 
                 if (1 === flag) {
                     self.userInfo = row;
+                    let roleIds = row.roleIds;
+                    self.all_roles.forEach(role => {
+                        if(roleIds.indexOf(role.id) >= 0) {
+                            self.selectedRoles.push(role);
+                            role.disable = false;
+                        }
+                    });
+
+                    console.log(self.selectedRoles);
+                    console.log(self.all_roles);
 
                     return;
                 }
@@ -307,10 +347,11 @@
             saveUserInfo(userForm) {
 
                 let self = this;
-
+                console.log(self.selectedRoles)
                 self.userFormDisabled = true;
                 self.$refs.userForm.validate(valid => {
                     if (valid) {
+                        self.userInfo.roleIds = self.selectedRoles;
                         if (this.userInfo.id == undefined) {
                             this.addUser();
                         } else {
@@ -323,7 +364,6 @@
             },
             updateUser() {
 
-                console.log(this.userInfo);
                 let self = this;
                 postData(self.$config.user_url.user_edit_url, self.userInfo).then(function (data) {
                     self.userInfoDialog = false;
@@ -345,8 +385,7 @@
             addUser() {
 
                 let self = this;
-                postData(self.$config.user_url.user_add_url, self.userInfo,
-                    {headers: {"Authorization": localStorage.getItem("AuthenticationToken")}}).then(function (data) {
+                postData(self.$config.user_url.user_add_url, self.userInfo).then(function (data) {
                     self.userInfoDialog = false;
                     self.$message({
                         type: 'success',
@@ -441,6 +480,15 @@
             },
             handleSelectionChange(val) {
                 this.selectedItems = val;
+            },
+            getRoles() {
+                let self = this;
+
+                postData(self.$config.role_url.get_all_roles_url, {}).then(res => {
+                    self.all_roles = res.data;
+                }, res => {
+
+                });
             }
         }
     }

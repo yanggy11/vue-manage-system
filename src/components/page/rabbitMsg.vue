@@ -7,7 +7,16 @@
                         <el-tab-pane :label="`未处理`" name="unhandled_message">
                             <el-table :data="messages" border style="width: 100%">
                                 <el-table-column type="selection" width="50" align="center"/>
-                                <el-table-column label="ID" prop="messageId" align="center"/>
+                                <el-table-column
+                                    label="id"
+                                    prop="messageId">
+                                    <template slot-scope="scope">
+                                        <el-button @click="handleClickInfo(scope.row)" type="text" size="small">
+                                            {{scope.row.messageId}}
+                                        </el-button>
+                                    </template>
+                                </el-table-column>
+
                                 <el-table-column label="交换机" prop="exchange" align="center"/>
                                 <el-table-column label="队列" prop="routingKey" align="center"/>
                                 <el-table-column label="发送时间" prop="createTime" width="160px" :formatter="dateFormater"
@@ -70,12 +79,23 @@
                 </el-tab-pane>
             </el-tabs>
         </div>
+        <div>
+            <el-dialog title="消息内容" :visible.sync="messageDialogInfo" center>
+                <div text-align="center">
+                    <tree-view :data="message" :options="{maxDepth: 4}"></tree-view>
+                </div>
+                <div slot="footer" class="dialog-footer">
+                    <el-button @click="messageDialogInfo = false">取 消</el-button>
+                    <el-button>重新发送</el-button>
+                </div>
+            </el-dialog>
+        </div>
     </div>
 </template>
 
 <script>
     import {postData} from '../../js/baseHttp'
-    import {formatDate} from '../../js/date.js'
+    import {formatDate} from '../../js/date'
 
     export default {
         name: 'tabs',
@@ -85,6 +105,8 @@
                 isHandled: 'unhandled_message',
                 showHeader: false,
                 messages: [],
+                message: {},
+                messageDialogInfo: false,
                 handled: [],
                 page: {
                     cur_page: 1,
@@ -101,7 +123,8 @@
 
             },
             dateFormater(row) {
-                return formatDate(new Date(row.createTime), "yyyy-MM-dd hh:mm:ss");
+                let self = this;
+                return formatDate(new Date(row.createTime), self.$config.time_format.date_time_format);
             },
             getData(isRecived, isHandled) {
                 let self = this;
@@ -110,7 +133,7 @@
                 if (self.$config.sended_message === isRecived) {
                     if (self.$config.unhandled_message === isHandled) {
                         isProcessed = 0;
-                    }else if(self.$config.handled_message === isHandled) {
+                    } else if (self.$config.handled_message === isHandled) {
                         isProcessed = 1;
                     }
                 } else {
@@ -125,20 +148,19 @@
                     type: type
                 };
 
-                console.log(data);
-                console.log(self.$config);
                 postData(self.$config.rabbit_msg_url.get_msg_url, data).then(res => {
-                    console.log(res);
                     self.messages = res.data;
+
+                    self.message = JSON.parse(self.messages[0].message)
                 }, res => {
 
                 });
 
-            }
-        },
-        computed: {
-            unreadNum() {
-                return this.unread.length;
+            },
+            handleClickInfo(row) {
+                let self = this;
+                self.messageDialogInfo = true;
+                self.message = JSON.parse(row.message);
             }
         },
         created() {
