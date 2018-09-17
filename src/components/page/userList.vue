@@ -1,19 +1,19 @@
 <template>
     <div class="table">
-        <div class="crumbs">
+        <div class="crumbs" align="center">
             <el-breadcrumb separator="/">
                 <el-breadcrumb-item><i class="el-icon-tickets"></i> 用户管理</el-breadcrumb-item>
             </el-breadcrumb>
         </div>
         <div class="container">
             <div class="handle-box">
-                <el-form :inline="true" :model="criteria" class="demo-form-inline"
+                <el-form :inline="true" :model="criteria" class="demo-form-inline form"
                          style="display:flex; justify-content: space-between;">
                     <div>
-                        <el-form-item>
+                        <el-form-item v-has-resource="'P_USER_ADD'">
                             <el-button type="primary" size="small" @click="openUserInfo(0,undefined)">新增</el-button>
                         </el-form-item>
-                        <el-form-item>
+                        <el-form-item v-has-resource="'P_USER_BATCH_DELETE'">
                             <el-button type="primary" size="small" @click="deleteAll">批量删除</el-button>
                         </el-form-item>
                     </div>
@@ -27,7 +27,7 @@
                                            :key="item.label"></el-option>
                             </el-select>
                         </el-form-item>
-                        <el-form-item>
+                        <el-form-item v-has-resource="'P_USER_QUERY'">
                             <el-button type="primary" size="small" @click="queryData">查询</el-button>
                         </el-form-item>
                     </div>
@@ -54,13 +54,13 @@
                 </el-table-column>
                 <el-table-column prop="deleteFlag" label="状态" align="center" :formatter="deleteFlagFormatter"
                                  width="100"/>
-                <el-table-column label="操作" align="center" width="160">
+                <el-table-column label="操作" align="center" width="160" v-has-any-resources="['P_USER_EDIT','P_USER_DELETE']">
                     <template slot-scope="scope">
-                        <el-button size="small" type="primary" @click="openUserInfo(1, scope.row)" icon="delete">编辑
+                        <el-button size="small" type="primary" @click="openUserInfo(1, scope.row)" icon="delete" v-has-resource="'P_USER_EDIT'">编辑
                         </el-button>
 
                         <el-button :disabled="scope.row.deleteFlag != 0" size="small" type="danger"
-                                   @click="deleteUser(scope.row.id)" icon="delete">删除
+                                   @click="deleteUser(scope.row.id)" icon="delete" v-has-resource="'P_USER_DELETE'">删除
                         </el-button>
                     </template>
                 </el-table-column>
@@ -76,7 +76,7 @@
         </div>
         <div style="width:40%;">
             <el-dialog title="用户信息" :visible.sync="userInfoDialog" center>
-                <el-form ref="userForm" :model="userInfo" :rules="rules">
+                <el-form ref="userForm" :model="userInfo" :rules="rules" class="form">
                     <el-row :gutter="20">
                         <el-col :span="12">
                             <el-form-item label="姓名" :label-width="formLabelWidth" prop="name">
@@ -127,6 +127,7 @@
                                 noChecked: '${total}',
                                 hasChecked: '${checked}/${total}'
                             }"
+                            :left-default-checked="[1, 2]"
                             :props="transferProps"
                             :data="all_roles">
                         </el-transfer>
@@ -134,7 +135,7 @@
                 </el-form>
                 <div slot="footer" class="dialog-footer">
                     <el-button @click="userInfoDialog = false">取 消</el-button>
-                    <el-button type="primary" :disabled="userFormDisabled" @click="saveUserInfo('userForm')">确 定
+                    <el-button type="primary" :disabled="userFormDisabled" @click="saveUserInfo">确 定
                     </el-button>
                 </div>
             </el-dialog>
@@ -155,7 +156,6 @@
                 } else {
                     callback();
                 }
-
             };
             return {
                 tableData: [],
@@ -174,7 +174,8 @@
                     sex: '0',
                     avater: ''
                 },
-                image:'',
+                roles: [],
+                image: '',
                 userFormDisabled: false,
                 genders: [{
                     value: "0",
@@ -209,12 +210,14 @@
                 transferProps: {
                     key: 'id',
                     label: 'role',
-                    disabled : 'disabled'
-                }
+                    disabled: 'disabled'
+                },
+                allRoles: []
             }
         },
         created() {
             this.getData(this.cur_page, this.cur_size);
+            this.getRoles();
         },
         methods: {
             setImage(e, fileList) {
@@ -222,6 +225,8 @@
 
                 let data = new FormData();
                 data.append('file', e.raw);
+                data.append('file', e.raw);
+                data.append('name','derrick');
                 //上传图片
                 postData(self.$config.user_url.user_upload_url, data).then(function (data) {
                     console.log(data)
@@ -233,7 +238,6 @@
                         center: true
                     })
                 });
-
             },
             handleAvatarSuccess(res, file) {
                 this.imageUrl = URL.createObjectURL(file.raw);
@@ -276,11 +280,7 @@
                     self.tableData = data.data;
                     self.loading = false;
 
-                    postData('users/user/base64',{}).then(res => {
-                        self.image = res.data;
-                    }, res => {
-
-                    })
+                    console.log(data);
 
                 }, function (data) {
 
@@ -312,40 +312,36 @@
                 self.userInfoDialog = true;
                 self.userFormDisabled = false;
 
-                self.getRoles();
-                if (0 === flag) {
-                    self.userInfo = {
-                        name: '',
-                        age: 0,
-                        phone: '',
-                        email: '',
-                        sex: 0,
-                        avater: ''
-                    };
-                    self.all_roles = [];
-                    self.selectedRoles = [];
-
-                    return;
-                }
-
-                if (1 === flag) {
-                    self.userInfo = row;
-                    let roleIds = row.roleIds;
-                    self.all_roles.forEach(role => {
-                        if(roleIds.indexOf(role.id) >= 0) {
-                            self.selectedRoles.push(role);
-                            role.disable = false;
-                        }
+                postData(self.$config.role_url.get_all_roles_url, {}).then(res => {
+                    res.data.forEach(value => {
+                        value.disabled = false;
                     });
 
-                    console.log(self.selectedRoles);
-                    console.log(self.all_roles);
+                    if (0 === flag) {
+                        self.userInfo = {
+                            name: '',
+                            age: 0,
+                            phone: '',
+                            email: '',
+                            sex: 0,
+                            avater: ''
+                        };
+                        self.selectedRoles = [];
+                        return;
+                    }
 
-                    return;
-                }
+                    if (1 === flag) {
+                        self.userInfo = row;
+                        self.selectedRoles = row.roleIds;
+                        self.all_roles = res.data;
+
+                        return;
+                    }
+                }, res => {
+
+                });
             },
-            saveUserInfo(userForm) {
-
+            saveUserInfo() {
                 let self = this;
                 console.log(self.selectedRoles)
                 self.userFormDisabled = true;
@@ -363,7 +359,6 @@
                 });
             },
             updateUser() {
-
                 let self = this;
                 postData(self.$config.user_url.user_edit_url, self.userInfo).then(function (data) {
                     self.userInfoDialog = false;
@@ -433,7 +428,6 @@
                 });
             },
             deleteAll() {
-
                 let self = this;
                 var userIdsarr = [];
                 for (var i = 0, len = self.selectedItems.length; i < len; i++) {
@@ -485,6 +479,7 @@
                 let self = this;
 
                 postData(self.$config.role_url.get_all_roles_url, {}).then(res => {
+                    console.log(res);
                     self.all_roles = res.data;
                 }, res => {
 
@@ -567,6 +562,18 @@
 
     .el-dialog__header {
         padding: 10px 10px 10px;
+        background-color: aliceblue;
+    }
+
+    .form  /deep/ .el-form-item__label {
+        text-align: right;
+        float: left;
+        font-size: 14px;
+        color: #606266;
+        line-height: 40px;
+        padding: 0 12px 0 0;
+        -webkit-box-sizing: border-box;
+        box-sizing: border-box;
         background-color: aliceblue;
     }
 </style>

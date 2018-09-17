@@ -53,9 +53,9 @@
             </div>
         </div>
 
-        <div style="width:30%;" >
+        <div style="width:30%;">
             <el-dialog title="角色信息" :visible="roleInfoDialog" :modal="true" center>
-                <el-form ref="roleForm" :model="roleInfo" :rules="rules" :inline="true">
+                <el-form class="form" ref="roleForm" :model="roleInfo" :rules="rules" :inline="true">
                     <el-form-item label="角色" :label-width="labelWidth" prop="role">
                         <el-input v-model="roleInfo.role" auto-complete="off"/>
                     </el-form-item>
@@ -65,20 +65,23 @@
                     <el-form-item label="备注" :label-width="labelWidth" prop="remark">
                         <el-input v-model="roleInfo.remark" auto-complete="off"/>
                     </el-form-item>
-
-                    <el-form-item>
-                        <el-tree
-                            style="border: 1px lightgray"
-                            :data="resources"
-                            :props="props"
-                            show-checkbox
-                            node-key="id"
-                            ref="tree"
-                            @check="selectResources"
-                            :default-expanded-keys="[1]"
-                            :expand-on-click-node="false"
-                            :default-checked-keys="defaultChecked">
-                        </el-tree>
+                </el-form>
+                <el-form class="form">
+                    <el-form-item label="选择资源" :label-width="labelWidth">
+                        <div style="boder: 1px black">
+                            <el-tree
+                                style="border: 1px lightgray"
+                                :data="resources"
+                                :props="props"
+                                show-checkbox
+                                node-key="id"
+                                ref="tree"
+                                @check="selectResources"
+                                :default-expanded-keys="[1]"
+                                :expand-on-click-node="false"
+                                :default-checked-keys="defaultChecked">
+                            </el-tree>
+                        </div>
                     </el-form-item>
                 </el-form>
                 <div slot="footer" class="dialog-footer">
@@ -174,15 +177,16 @@
             openRoleInfo(flag, row) {
                 let self = this;
                 self.roleInfoDialog = true;
-                    if (1 === flag) {
-                        console.log(row)
-                        self.roleInfo = row;
-                        self.defaultChecked = row.resourcesId;
+                if (1 === flag) {
+                    console.log(row)
+                    self.roleInfo = row;
+                    self.defaultChecked = row.resourcesId;
 
-                        console.log(self.defaultChecked)
+                    console.log(self.defaultChecked)
 
-                        return;
-                    };
+                    return;
+                }
+                ;
 
 
                 if (2 === flag) {
@@ -320,6 +324,7 @@
     body > .el-container {
         margin-bottom: 40px;
     }
+
     .el-input__inner {
         -webkit-appearance: none;
         background-color: #fff;
@@ -351,5 +356,17 @@
         border: 1px solid #ddd;
         border-radius: 5px;
         margin-left: 15px;
+    }
+
+    .form  /deep/ .el-form-item__label {
+        text-align: right;
+        float: left;
+        font-size: 14px;
+        color: #606266;
+        line-height: 40px;
+        padding: 0 12px 0 0;
+        -webkit-box-sizing: border-box;
+        box-sizing: border-box;
+        background-color: aliceblue;
     }
 </style>

@@ -49,13 +49,15 @@
                 self.loginButtonClick = false;//点击登陆后，禁用登录按钮，
                 postData('auth/login', self.user)
                     .then(function (data) {
-
-                        console.log(data)
+                        console.log(data);
                         let user = data.data.user;
                         localStorage.setItem("AuthenticationToken", data.data.token);
                         localStorage.setItem("username", user.username);
                         localStorage.setItem("userId", user.userId);
                         localStorage.setItem("avater", user.avater);
+
+                        let json = JSON.stringify(user.authorities);
+                        localStorage.setItem('resources', json);
                         self.$router.push('/dashboard');
 
                         self.loginButtonClick = true;//登录成功后放开登录按钮

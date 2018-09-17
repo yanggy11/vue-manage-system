@@ -4,25 +4,25 @@
             text-color="#bfcbd9" active-text-color="#20a0ff" unique-opened router>
             <template v-for="item in items">
                 <template v-if="item.subs">
-                    <el-submenu :index="item.index" :key="item.index">
+                    <el-submenu :index="item.index" :key="item.index" v-has-any-resources="item.resources">
                         <template slot="title">
                             <i :class="item.icon"></i><span slot="title">{{ item.title }}</span>
                         </template>
                         <template v-for="subItem in item.subs">
-                            <el-submenu v-if="subItem.subs" :index="subItem.index" :key="subItem.index">
+                            <el-submenu v-if="subItem.subs" :index="subItem.index" :key="subItem.index" v-has-any-resources="subItem.resources">
                                 <template slot="title">{{ subItem.title }}</template>
                                 <el-menu-item v-for="(threeItem,i) in subItem.subs" :key="i" :index="threeItem.index">
                                     {{ threeItem.title }}
                                 </el-menu-item>
                             </el-submenu>
-                            <el-menu-item v-else :index="subItem.index" :key="subItem.index">
+                            <el-menu-item v-else :index="subItem.index" :key="subItem.index" v-has-resource="subItem.resources">
                                 {{ subItem.title }}
                             </el-menu-item>
                         </template>
                     </el-submenu>
                 </template>
                 <template v-else>
-                    <el-menu-item :index="item.index" :key="item.index">
+                    <el-menu-item :index="item.index" :key="item.index" v-has-resource="item.resources">
                         <i :class="item.icon"></i><span slot="title">{{ item.title }}</span>
                     </el-menu-item>
                 </template>
@@ -41,71 +41,40 @@
                     {
                         icon: 'el-icon-setting',
                         index: 'dashboard',
-                        title: '系统首页'
+                        title: '系统首页',
+                        resources:'P_INDEX'
                     },
                     {
                         icon: 'el-icon-tickets',
                         index: '4',
                         title: '数据管理',
+                        resources: ['P_DATA_MANAGE','P_USERS', 'P_RESOURCES', 'P_ROUTES', 'P_ROLE'],
                         subs: [
                             {
                                 index: 'usersList',
-                                title: '用户管理'
+                                title: '用户管理',
+                                resources:'P_USERS'
+
                             },{
                                 index: 'resources',
-                                title: '资源管理'
+                                title: '资源管理',
+                                resources: 'P_RESOURCES'
                             },{
                                 index: 'routes',
-                                title: '路由管理'
+                                title: '路由管理',
+                                resources:'P_ROUTES'
                             },{
                                 index: 'roles',
-                                title: '角色管理'
+                                title: '角色管理',
+                                resources: 'P_ROLE'
                             }
                         ]
                     },
                     {
                         icon: 'el-icon-message',
                         index: 'rabbitMsg',
-                        title: '消息管理'
-                    },
-                    {
-                        icon: 'el-icon-date',
-                        index: '3',
-                        title: '表单相关',
-                        subs: [
-                            {
-                                index: 'form',
-                                title: '基本表单'
-                            },
-                            {
-                                index: '3-2',
-                                title: '编辑器',
-                                subs: [
-                                    {
-                                        index: 'editor',
-                                        title: '富文本编辑器'
-                                    },
-                                    {
-                                        index: 'markdown',
-                                        title: 'markdown编辑器'
-                                    },
-                                ]
-                            },
-                            {
-                                index: 'upload',
-                                title: '文件上传'
-                            }
-                        ]
-                    },
-                    {
-                        icon: 'el-icon-star-on',
-                        index: 'charts',
-                        title: 'schart图表'
-                    },
-                    {
-                        icon: 'el-icon-rank',
-                        index: 'drag',
-                        title: '拖拽列表'
+                        title: '消息管理',
+                        resources: 'P_MESSAGE'
                     }
                 ]
             }

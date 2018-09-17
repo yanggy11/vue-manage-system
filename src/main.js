@@ -27,6 +27,41 @@ Vue.http.interceptors.push((request, next) => {
     });
 });
 
+Vue.directive('hasResource', {
+    bind: function (el, binding, vnode) {
+
+        let resources = JSON.parse(localStorage.getItem('resources'));
+        let flag = resources.some(resource => {
+           return resource.authority === binding.value;
+        });
+
+        if(flag) {
+            el.style.display="";
+        }else {
+            el.style.display ="none";
+        }
+    }
+});
+
+Vue.directive('hasAnyResources',{
+    bind: function(el, binding, vnode) {
+
+        let resources = JSON.parse(localStorage.getItem('resources'));
+        let flag = resources.some(resources => {
+           let value = binding.value;
+           return value.some(v => {
+              return  v === resources.authority;
+           });
+        });
+
+        if(flag) {
+            el.style.display="";
+        }else {
+            el.style.display ="none";
+        }
+    }
+});
+
 new Vue({
     router,
     render: h => h(App)
