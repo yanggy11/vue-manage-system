@@ -1,5 +1,5 @@
 export default {
-    OK: "1",
+    OK: '1',
     api: 'api/',
     unhandled_message: 'unhandled_message',
     handled_message: 'handled_message',
@@ -44,6 +44,8 @@ export default {
         date_time_format: 'yyyy-MM-dd hh:mm:ss'
     },
     web_request_url: {
-        file_upload_url: 'web/upload'
+        file_upload_url: 'web/upload',
+        todo_add_url: 'web/todos/addTodos',
+        todo_get_url:'web/todos/getTodos'
     }
 };

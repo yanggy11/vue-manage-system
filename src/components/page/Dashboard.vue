@@ -69,71 +69,135 @@
                 <el-card shadow="hover" :body-style="{ height: '304px'}">
                     <div slot="header" class="clearfix">
                         <span>待办事项</span>
-                        <el-button style="float: right; padding: 3px 0" type="text">添加</el-button>
+                        <el-button style="float: right; padding: 3px 0" type="text" @click="openTodoDialog(undefined)">添加
+                        </el-button>
                     </div>
                     <el-table :data="todoList" :show-header="false" height="304" style="width: 100%;font-size:14px;">
                         <el-table-column width="40">
                             <template slot-scope="scope">
-                                <el-checkbox v-model="scope.row.status"></el-checkbox>
+                                <el-checkbox v-model="scope.row.status == 1"></el-checkbox>
                             </template>
                         </el-table-column>
                         <el-table-column>
                             <template slot-scope="scope">
-                                <div class="todo-item" :class="{'todo-item-del': scope.row.status}">{{scope.row.title}}</div>
+                                <div class="todo-item" :class="{'todo-item-del': scope.row.status == 1}">
+                                    {{scope.row.content}}
+                                </div>
                             </template>
                         </el-table-column>
-                        <el-table-column width="60">
+                        <el-table-column width="180px">
                             <template slot-scope="scope">
-                                <i class="el-icon-edit"></i>
-                                <i class="el-icon-delete"></i>
+                                <el-button size="small" @click="openTodoDialog(scope.row)" >完成</el-button>
+                                <el-button size="small" @click="deleteItem(scope.row)">删除</el-button>
                             </template>
                         </el-table-column>
                     </el-table>
                 </el-card>
-
             </el-col>
         </el-row>
+
+        <div>
+            <el-dialog title="代办事项" :visible.sync="todoDialogVisible" center>
+                <el-form ref="todoForm" :model="todoItem" :rules="rules" :inline="true">
+                    <el-form-item label="代办事项" prop="content">
+                        <el-input type="textarea" style="width: 350px" :row="8" v-model="todoItem.content"></el-input>
+                    </el-form-item>
+                </el-form>
+
+                <div class="dialog-footer" slot="footer">
+                    <el-button size="small" @click="saveItem">保存</el-button>
+                    <el-button size="small" @click="todoDialogVisible = false">取消</el-button>
+                </div>
+            </el-dialog>
+        </div>
     </div>
 </template>
 
 <script>
+    import {postData} from "../../js/baseHttp";
+    import {formatDate} from "../../js/date";
+
     export default {
         name: 'dashboard',
         data() {
             return {
                 name: localStorage.getItem('username'),
                 avater: localStorage.getItem('avater'),
-                todoList: [
-                    {
-                        title: '今天要修复100个bug',
-                        status: false,
-                    },
-                    {
-                        title: '今天要修复100个bug',
-                        status: false,
-                    },
-                    {
-                        title: '今天要写100行代码加几个bug吧',
-                        status: false,
+                todoList: [],
+                todoDialogVisible: false,
+                todoItem: {},
+                rules: {
+                    content: [{
+                        required: true, message: '请输入待办事项'
                     }, {
-                        title: '今天要修复100个bug',
-                        status: false,
-                    },
-                    {
-                        title: '今天要修复100个bug',
-                        status: true,
-                    },
-                    {
-                        title: '今天要写100行代码加几个bug吧',
-                        status: true,
-                    }
-                ]
+                        min: 1, max: 100, message: '请输入1-100个字符'
+                    }]
+                }
             }
         },
         computed: {
             role() {
 
                 return this.name === 'admin' ? '超级管理员' : '普通用户';
+            }
+        },
+        created() {
+            this.getTodos();
+        },
+        methods: {
+            deleteItem(row) {
+
+            },
+            getTodos() {
+                let self = this;
+                let data = {
+                    beginTime: formatDate(new Date(), 'yyyy-MM-dd') + ' 00:00:00',
+                    endTime: formatDate(new Date(), 'yyyy-MM-dd') + ' 23:59:59',
+                    userId: localStorage.getItem("userId")
+                };
+                postData(self.$config.web_request_url.todo_get_url, data).then(res => {
+                    console.log(res);
+                    self.todoList = res.data;
+                }, res => {
+
+                })
+            },
+            openTodoDialog(row) {
+                let self = this;
+                self.todoDialogVisible = true;
+                if(undefined != row) {
+                    self.todoItem = row;
+                }else {
+                    self.todoItem = {
+                        userId: localStorage.getItem("userId")
+                    };
+                }
+            },
+            saveItem() {
+                let self = this;
+
+                self.$refs.todoForm.validate(valid => {
+                    if (valid) {
+                        postData(this.$config.web_request_url.todo_add_url, self.todoItem).then(res => {
+                            if (res.code === self.$config.OK) {
+                                self.$message({
+                                    message: res.msg,
+                                    type: 'success',
+                                    center: true
+                                });
+                                self.getTodos();
+                                self.todoDialogVisible = false;
+                            } else {
+                                self.$message({
+                                    message: res.msg,
+                                    type: 'error',
+                                    center: true
+                                });
+                            }
+                        }, res => {
+                        });
+                    }
+                });
             }
         }
     }
