@@ -54,9 +54,11 @@
                 </el-table-column>
                 <el-table-column prop="deleteFlag" label="状态" align="center" :formatter="deleteFlagFormatter"
                                  width="100"/>
-                <el-table-column label="操作" align="center" width="160" v-has-any-resources="['P_USER_EDIT','P_USER_DELETE']">
+                <el-table-column label="操作" align="center" width="160"
+                                 v-has-any-resources="['P_USER_EDIT','P_USER_DELETE']">
                     <template slot-scope="scope">
-                        <el-button size="small" type="primary" @click="openUserInfo(1, scope.row)" icon="delete" v-has-resource="'P_USER_EDIT'">编辑
+                        <el-button size="small" type="primary" @click="openUserInfo(1, scope.row)" icon="delete"
+                                   v-has-resource="'P_USER_EDIT'">编辑
                         </el-button>
 
                         <el-button :disabled="scope.row.deleteFlag != 0" size="small" type="danger"
@@ -74,7 +76,7 @@
                 </div>
             </div>
         </div>
-        <div style="width:40%;">
+        <div style="width:1000px;">
             <el-dialog title="用户信息" :visible.sync="userInfoDialog" center>
                 <el-form ref="userForm" :model="userInfo" :rules="rules" class="form">
                     <el-row :gutter="20">
@@ -105,6 +107,19 @@
                         <el-radio v-model="userInfo.sex" class="radio" :label="1">女</el-radio>
                         <el-radio v-model="userInfo.sex" class="radio" :label="0">男</el-radio>
                     </el-form-item>
+                    <el-form-item label="角色列表" :label-width="formLabelWidth">
+                        <el-transfer class="transfer"
+                                     v-model="selectedRoles"
+                                     :titles="['全部角色', '用户角色']"
+                                     :format="{
+                                noChecked: '${total}',
+                                hasChecked: '${checked}/${total}'
+                            }"
+                                     :props="transferProps"
+                                     :data="all_roles">
+                        </el-transfer>
+                    </el-form-item>
+
                     <el-form-item label="头像" :label-width="formLabelWidth">
                         <el-upload
                             class="avatar-uploader"
@@ -119,20 +134,11 @@
                             <i v-else class="el-icon-plus avatar-uploader-icon"></i>
                         </el-upload>
                     </el-form-item>
-                    <el-form-item label="角色列表" :label-width="formLabelWidth">
-                        <el-transfer
-                            v-model="selectedRoles"
-                            :titles="['全部角色', '用户角色']"
-                            :format="{
-                                noChecked: '${total}',
-                                hasChecked: '${checked}/${total}'
-                            }"
-                            :left-default-checked="[1, 2]"
-                            :props="transferProps"
-                            :data="all_roles">
-                        </el-transfer>
-                    </el-form-item>
                 </el-form>
+                <div>
+
+                    <first-demo :clickMe="clickMe" :propse="1" content="点击我"></first-demo>
+                </div>
                 <div slot="footer" class="dialog-footer">
                     <el-button @click="userInfoDialog = false">取 消</el-button>
                     <el-button type="primary" :disabled="userFormDisabled" @click="saveUserInfo">确 定
@@ -147,6 +153,7 @@
 
     import {formatDate} from '../../js/date.js'
     import {postData, deleteData} from '../../js/baseHttp.js'
+    import FirstDemo from '@/components/custom/FirstDemo'
 
     export default {
         data() {
@@ -219,17 +226,21 @@
             this.getData(this.cur_page, this.cur_size);
             this.getRoles();
         },
+        components:{
+            FirstDemo
+        },
         methods: {
+            clickMe() {
+              this.$message.success('click me');
+            },
             setImage(e, fileList) {
                 let self = this;
 
                 let data = new FormData();
                 data.append('file', e.raw);
-                data.append('file', e.raw);
-                data.append('name','derrick');
+                data.append('name', 'derrick');
                 //上传图片
-                postData(self.$config.user_url.user_upload_url, data).then(function (data) {
-                    console.log(data)
+                postData(self.$config.web_request_url.file_upload_url, data).then(function (data) {
                     self.userInfo.avater = data.data;
                 }, function (data) {
                     self.$message({
@@ -279,9 +290,6 @@
                     self.total = data.totalRecord;
                     self.tableData = data.data;
                     self.loading = false;
-
-                    console.log(data);
-
                 }, function (data) {
 
                     self.$message({
@@ -343,7 +351,6 @@
             },
             saveUserInfo() {
                 let self = this;
-                console.log(self.selectedRoles)
                 self.userFormDisabled = true;
                 self.$refs.userForm.validate(valid => {
                     if (valid) {
@@ -378,7 +385,6 @@
                 });
             },
             addUser() {
-
                 let self = this;
                 postData(self.$config.user_url.user_add_url, self.userInfo).then(function (data) {
                     self.userInfoDialog = false;
@@ -464,7 +470,6 @@
                                 center: true
                             });
                         });
-
                 }).catch(() => {
                     self.$message({
                         type: 'info',
@@ -477,12 +482,17 @@
             },
             getRoles() {
                 let self = this;
-
                 postData(self.$config.role_url.get_all_roles_url, {}).then(res => {
-                    console.log(res);
                     self.all_roles = res.data;
+                    self.all_roles.forEach(value => {
+                        value.disabled = false;
+                    })
                 }, res => {
-
+                    self.$message({
+                        message: '发生未知错误',
+                        type: 'error',
+                        center: true
+                    })
                 });
             }
         }
@@ -560,12 +570,7 @@
         border-radius: 5px;
     }
 
-    .el-dialog__header {
-        padding: 10px 10px 10px;
-        background-color: aliceblue;
-    }
-
-    .form  /deep/ .el-form-item__label {
+    .form /deep/ .el-form-item__label {
         text-align: right;
         float: left;
         font-size: 14px;
@@ -574,6 +579,15 @@
         padding: 0 12px 0 0;
         -webkit-box-sizing: border-box;
         box-sizing: border-box;
-        background-color: aliceblue;
+    }
+
+    .transfer /deep/ .el-transfer-panel__body {
+        height: 200px;
+    }
+
+    .transfer /deep/ .el-transfer__buttons {
+        display: inline-block;
+        vertical-align: middle;
+        padding: 0 5px;
     }
 </style>

@@ -178,34 +178,21 @@
                 let self = this;
                 self.roleInfoDialog = true;
                 if (1 === flag) {
-                    console.log(row)
                     self.roleInfo = row;
                     self.defaultChecked = row.resourcesId;
-
-                    console.log(self.defaultChecked)
-
                     return;
                 }
-                ;
-
 
                 if (2 === flag) {
                     self.roleInfo = {};
-
                     return;
                 }
             },
             getResources() {
                 let self = this;
-                postData('users/resources/getResourceTrees', {},).then(function (data) {
-
-                    console.log(self.resources)
+                postData(self.$config.resources_url.get_resoures_trees, {},).then(function (data) {
                     self.resources = data.data;
-
-                    console.log(self.resources)
                 }, function (data) {
-
-                    console.log(data)
                     self.$message({
                         message: data,
                         type: 'error',
@@ -235,7 +222,6 @@
                     if (valid) {
                         self.roleInfo.resourcesIds = self.selectedResourcesIds;
 
-                        console.log(self.roleInfo)
                         if (undefined == self.roleInfo.id) {
                             postData(self.$config.role_url.add_role_url, self.roleInfo).then(response => {
                                 self.$message({
@@ -270,7 +256,6 @@
             },
 
             deleteRole(ids) {
-                console.log(ids)
                 let self = this;
 
                 if (0 === ids.length) {
@@ -292,8 +277,6 @@
                     center: true
                 }).then(() => {
                     deleteData(self.$config.role_url.delete_role_url, {roleIds: ids}).then(res => {
-
-                            console.log(res)
                             self.$message({
                                 type: 'success',
                                 message: res.msg,
@@ -367,6 +350,5 @@
         padding: 0 12px 0 0;
         -webkit-box-sizing: border-box;
         box-sizing: border-box;
-        background-color: aliceblue;
     }
 </style>

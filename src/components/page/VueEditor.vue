@@ -41,7 +41,6 @@
                 this.content = html;
             },
             submit() {
-                console.log(this.content);
                 this.$message.success('提交成功！');
             }
         }

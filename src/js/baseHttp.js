@@ -47,3 +47,14 @@ export function deleteData(url, body) {
         );
     })
 }
+
+
+export function intercepters(request, next) {
+    let token = localStorage.getItem('AuthenticationToken');
+    if (token) {
+        request.headers.set('Authorization', token);
+    }
+    next((response) => {
+        return response;
+    });
+}

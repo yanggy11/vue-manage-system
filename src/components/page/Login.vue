@@ -47,9 +47,8 @@
 
                 const self = this;
                 self.loginButtonClick = false;//点击登陆后，禁用登录按钮，
-                postData('auth/login', self.user)
+                postData(self.$config.user_url.user_login_url, self.user)
                     .then(function (data) {
-                        console.log(data);
                         let user = data.data.user;
                         localStorage.setItem("AuthenticationToken", data.data.token);
                         localStorage.setItem("username", user.username);
@@ -62,7 +61,6 @@
 
                         self.loginButtonClick = true;//登录成功后放开登录按钮
                     }, function (data) {
-                        console.log(data);
                         self.$message({
                             message: '登录失败',
                             type: 'error',

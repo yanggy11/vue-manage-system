@@ -6,40 +6,44 @@ export default {
     recieved_message: 'recieved_message',
     sended_message: 'sended_message',
     user_url: {
-        user_login_url: 'auth/login',
-        user_upload_url: 'users/user/uploa',
-        user_list_url: 'users/user/userList',
-        user_edit_url: 'users/user/updateUserInfo',
-        user_delete_url: 'users/user/delete',
-        user_add_url: 'users/user/register',
-        user_delete_all_url: 'users/user/deleteAll'
+        user_login_url: 'resources/auth/login',
+        user_upload_url: 'resources/user/uploa',
+        user_list_url: 'resources/user/userList',
+        user_edit_url: 'resources/user/updateUserInfo',
+        user_delete_url: 'resources/user/delete',
+        user_add_url: 'resources/user/register',
+        user_delete_all_url: 'resources/user/deleteAll'
     },
     routes_url: {
-        get_routes_url: 'users/route/getAllRoutesInPage',
-        routes_disable_url: 'users/route/disableRoute',
+        get_routes_url: 'resources/route/getAllRoutesInPage',
+        routes_disable_url: 'resources/route/disableRoute',
         delete_routes_url: '',
         edit_routes_url: '',
         add_routes_url: ''
     },
     role_url: {
-        get_roles_by_page: 'users/role/getRolesByCriteria',
-        add_role_url: 'users/role/addRole',
-        edit_role_url: 'users/role/editRole',
-        delete_role_url: 'users/role/deleteRole',
-        get_all_roles_url: 'users/role/getAllRoles'
+        get_roles_by_page: 'resources/role/getRolesByCriteria',
+        add_role_url: 'resources/role/addRole',
+        edit_role_url: 'resources/role/editRole',
+        delete_role_url: 'resources/role/deleteRole',
+        get_all_roles_url: 'resources/role/getAllRoles'
     },
     resources_url: {
-        delete_resources_url: 'users/resources/deleteResource',
-        get_resources_url: 'users/resources/getResourceTrees',
-        add_resources_url: 'users/resources/addResource',
-        edit_resources_url: 'users/resources/editResource'
+        delete_resources_url: 'resources/resources/deleteResource',
+        get_resources_url: 'resources/resources/getResourceTrees',
+        add_resources_url: 'resources/resources/addResource',
+        edit_resources_url: 'resources/resources/editResource',
+        get_resoures_trees: 'resources/resources/getResourceTrees'
     },
     rabbit_msg_url: {
-        get_msg_url: 'users/rabbit/msg/getRabbitMsg',
+        get_msg_url: 'resources/rabbit/msg/getRabbitMsg',
         delete_msg_url: '',
         send_msg_url: ''
     },
     time_format: {
         date_time_format: 'yyyy-MM-dd hh:mm:ss'
+    },
+    web_request_url: {
+        file_upload_url: 'web/upload'
     }
 };

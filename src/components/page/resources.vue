@@ -195,8 +195,6 @@
                     self.selected = data.data;
                     self.loading = false;
                 }, function (data) {
-
-                    console.log(data)
                     self.$message({
                         message: data,
                         type: 'error',
@@ -286,7 +284,6 @@
         -webkit-box-sizing: border-box;
         box-sizing: border-box;
         text-align: center;
-        background-color: aliceblue;
     }
 
     .el-dialog__header {

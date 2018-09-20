@@ -82,7 +82,6 @@
                     page: currentPage,
                     pageSize: currentSize
                 }).then(function (data) {
-                    console.log(data);
                     self.total = data.totalRecord;
                     self.routes = data.data;
                     self.loading = false;
@@ -122,7 +121,6 @@
                 return "是";
             },
             enableOrDisable(dynamicId, enabled) {
-                console.log(dynamicId);
                 let self = this;
                 postData(self.$config.routes_url.routes_disable_url, {
                     routeId: dynamicId,
