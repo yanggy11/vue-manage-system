@@ -49,6 +49,8 @@
                 self.loginButtonClick = false;//点击登陆后，禁用登录按钮，
                 postData(self.$config.user_url.user_login_url, self.user)
                     .then(function (data) {
+
+                        console.log(data);
                         let user = data.data.user;
                         localStorage.setItem("AuthenticationToken", data.data.token);
                         localStorage.setItem("username", user.username);

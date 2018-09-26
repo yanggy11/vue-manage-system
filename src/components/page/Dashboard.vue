@@ -85,10 +85,10 @@
                                 </div>
                             </template>
                         </el-table-column>
-                        <el-table-column width="180px">
+                        <el-table-column width="180px" align="right">
                             <template slot-scope="scope">
-                                <el-button size="small" @click="openTodoDialog(scope.row)" >完成</el-button>
-                                <el-button size="small" @click="deleteItem(scope.row)">删除</el-button>
+                                <el-button v-show="scope.row.status == 0" type="text" size="small" class="el-icon-check" @click="finishItem(scope.row)"></el-button>
+                                <el-button type="text" size="small" class="el-icon-delete" @click="deleteItem(scope.row)"></el-button>
                             </template>
                         </el-table-column>
                     </el-table>
@@ -145,8 +145,58 @@
             this.getTodos();
         },
         methods: {
-            deleteItem(row) {
+            finishItem(row) {
+              let self = this;
+              self.$confirm('确定完成代办事项, 是否继续?', '提示', {
+                  confirmButtonText: '确定',
+                  cancelButtonText: '取消',
+                  type: 'warning'
+              }).then(() => {
+                  let data = {
+                      id: row.id
+                  };
+                  postData(self.$config.web_request_url.todo_finish_url,data).then(res => {
+                      self.$message({
+                          type: 'success',
+                          message: '操作成功!'
+                      });
 
+                      self.getTodos();
+                  }, res => {
+                  });
+              }).catch(() => {
+                  self.$message({
+                      type: 'info',
+                      message: '已取消操作'
+                  });
+              });
+            },
+            deleteItem(row) {
+                let self = this;
+                self.$confirm('确定删除代办事项, 是否继续?', '提示', {
+                    confirmButtonText: '确定',
+                    cancelButtonText: '取消',
+                    type: 'warning'
+                }).then(() => {
+                    let data = {
+                        id: row.id
+                    };
+                    postData(self.$config.web_request_url.todo_delete_url,data).then(res => {
+                        self.$message({
+                            type: 'success',
+                            message: '操作成功!'
+                        });
+                        self.getTodos();
+                    }, res => {
+
+                    });
+
+                }).catch(() => {
+                    self.$message({
+                        type: 'info',
+                        message: '已取消删除'
+                    });
+                });
             },
             getTodos() {
                 let self = this;
@@ -179,7 +229,7 @@
                 self.$refs.todoForm.validate(valid => {
                     if (valid) {
                         postData(this.$config.web_request_url.todo_add_url, self.todoItem).then(res => {
-                            if (res.code === self.$config.OK) {
+                            if (res.status === self.$config.OK) {
                                 self.$message({
                                     message: res.msg,
                                     type: 'success',

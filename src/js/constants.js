@@ -46,6 +46,8 @@ export default {
     web_request_url: {
         file_upload_url: 'web/upload',
         todo_add_url: 'web/todos/addTodos',
-        todo_get_url:'web/todos/getTodos'
+        todo_get_url:'web/todos/getTodos',
+        todo_finish_url: 'web/todos/finish',
+        todo_delete_url: 'web/todos/delete'
     }
 };
