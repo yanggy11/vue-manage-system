@@ -49,5 +49,6 @@ export default {
         todo_get_url:'web/todos/getTodos',
         todo_finish_url: 'web/todos/finish',
         todo_delete_url: 'web/todos/delete'
-    }
+    },
+    upload_url: 'upload/upload'
 };

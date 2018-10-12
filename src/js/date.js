@@ -22,13 +22,3 @@ export function formatDate(date, fmt) {
 function padLeftZero(str) {
     return ('00' + str).substr(str.length);
 }
-
-
-export function processUrl(env,url) {
-    if(env == 'prd') {
-        console.log('执行')
-        return '/' + url;
-    }
-
-    return url;
-}

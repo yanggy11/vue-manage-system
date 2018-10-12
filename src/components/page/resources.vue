@@ -142,19 +142,15 @@
                     cancelButtonText: '取消',
                     type: 'warning'
                 }).then(() => {
-                    postData( self.$config.resources_url.delete_resources_url, {resourceIds: self.selectedItems}).then(function (data) {
-                        self.$message({
-                            message: '已删除！',
-                            type: 'success',
-                            center: true
-                        });
-                        self.getData();
-                    }, function (data) {
-                        self.$message({
-                            message: '操作失败！',
-                            type: 'error',
-                            center: true
-                        });
+                    postData(self.$config.resources_url.delete_resources_url, {resourceIds: self.selectedItems}).then(function (data) {
+                        if (undefined != data) {
+                            self.$message({
+                                message: '已删除！',
+                                type: 'success',
+                                center: true
+                            });
+                            self.getData();
+                        }
                     });
                 }).catch(() => {
                     self.$message({
@@ -191,16 +187,12 @@
             getData() {
                 let self = this;
                 postData(self.$config.resources_url.get_resources_url, {},).then(function (data) {
-                    self.resources = data.data;
-                    self.selected = data.data;
-                    self.loading = false;
-                }, function (data) {
-                    self.$message({
-                        message: data,
-                        type: 'error',
-                        center: true
-                    });
-                })
+                    if (undefined != data) {
+                        self.resources = data.data;
+                        self.selected = data.data;
+                        self.loading = false;
+                    }
+                });
             },
             saveResources() {
                 let self = this;
@@ -209,37 +201,29 @@
                     if (valid) {
                         if (self.resource.id == undefined) {
                             postData(self.$config.resources_url.add_resources_url, this.resource).then(function (data) {
-                                self.$message({
-                                    message: '加载成功！',
-                                    type: 'success',
-                                    center: true
-                                });
+                                if (undefined != data) {
+                                    self.$message({
+                                        message: '加载成功！',
+                                        type: 'success',
+                                        center: true
+                                    });
 
-                                self.resourceInfoDialog = false;
-                                self.getData();
-                            }, function (data) {
-                                self.$message({
-                                    message: data,
-                                    type: 'error',
-                                    center: true
-                                });
+                                    self.resourceInfoDialog = false;
+                                    self.getData();
+                                }
                             });
                         } else {
                             postData(self.$config.resources_url.edit_resources_url, self.resource).then(function (data) {
-                                self.$message({
-                                    message: '加载成功！',
-                                    type: 'success',
-                                    center: true
-                                });
+                                if (undefined != data) {
+                                    self.$message({
+                                        message: '加载成功！',
+                                        type: 'success',
+                                        center: true
+                                    });
 
-                                self.resourceInfoDialog = false;
-                                self.getData();
-                            }, function (data) {
-                                self.$message({
-                                    message: data,
-                                    type: 'error',
-                                    center: true
-                                });
+                                    self.resourceInfoDialog = false;
+                                    self.getData();
+                                }
                             });
                         }
                     }

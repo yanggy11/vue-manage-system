@@ -27,9 +27,9 @@ export function postData(url, body, headers) {
     return new Promise((resolve, reject) => {
         vue.$http.post(vue.$config.api + url, body
         ).then(response => {
-            resolve(response.body);
+            resolve(response.body)
         }, response => {
-            reject(response.bodyText);
+            resolve(undefined);
         });
     })
 }
@@ -46,15 +46,4 @@ export function deleteData(url, body) {
             }
         );
     })
-}
-
-
-export function intercepters(request, next) {
-    let token = localStorage.getItem('AuthenticationToken');
-    if (token) {
-        request.headers.set('Authorization', token);
-    }
-    next((response) => {
-        return response;
-    });
 }

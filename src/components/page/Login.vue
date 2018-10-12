@@ -9,6 +9,7 @@
                 <el-form-item prop="password">
                     <el-input type="password" placeholder="password" v-model="user.password"/>
                 </el-form-item>
+                <i>用户名或密码错误</i>
                 <div class="login-btn">
                     <el-button type="primary" @click="login('ruleForm')">登录</el-button>
                 </div>
@@ -44,32 +45,22 @@
         },
         methods: {
             login(formName) {
-
                 const self = this;
                 self.loginButtonClick = false;//点击登陆后，禁用登录按钮，
                 postData(self.$config.user_url.user_login_url, self.user)
                     .then(function (data) {
+                        if (undefined != data) {
+                            let user = data.data.user;
+                            localStorage.setItem("AuthenticationToken", data.data.token);
+                            localStorage.setItem("username", user.username);
+                            localStorage.setItem("userId", user.userId);
+                            localStorage.setItem("avater", user.avater);
 
-                        console.log(data);
-                        let user = data.data.user;
-                        localStorage.setItem("AuthenticationToken", data.data.token);
-                        localStorage.setItem("username", user.username);
-                        localStorage.setItem("userId", user.userId);
-                        localStorage.setItem("avater", user.avater);
-
-                        let json = JSON.stringify(user.authorities);
-                        localStorage.setItem('resources', json);
-                        self.$router.push('/dashboard');
-
+                            let json = JSON.stringify(user.authorities);
+                            localStorage.setItem('resources', json);
+                            self.$router.push('/dashboard');
+                        }
                         self.loginButtonClick = true;//登录成功后放开登录按钮
-                    }, function (data) {
-                        self.$message({
-                            message: '登录失败',
-                            type: 'error',
-                            center: true
-                        });
-
-                        self.loginButtonClick = true;//登录失败放开登录按钮
                     });
             }
         }

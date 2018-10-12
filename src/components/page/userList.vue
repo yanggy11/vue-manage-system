@@ -137,7 +137,7 @@
                 </el-form>
                 <div>
 
-                    <first-demo :clickMe="clickMe" :propse="1" content="点击我"></first-demo>
+                    <first-demo :clickMe="clickMe" content="点击我"></first-demo>
                 </div>
                 <div slot="footer" class="dialog-footer">
                     <el-button @click="userInfoDialog = false">取 消</el-button>
@@ -226,28 +226,25 @@
             this.getData(this.cur_page, this.cur_size);
             this.getRoles();
         },
-        components:{
+        components: {
             FirstDemo
         },
         methods: {
             clickMe() {
-              this.$message.success('click me');
+                this.$message.success('click me');
             },
             setImage(e, fileList) {
                 let self = this;
 
                 let data = new FormData();
                 data.append('file', e.raw);
+                data.append('file', e.raw);
                 data.append('name', 'derrick');
                 //上传图片
-                postData(self.$config.web_request_url.file_upload_url, data).then(function (data) {
-                    self.userInfo.avater = data.data;
-                }, function (data) {
-                    self.$message({
-                        message: '上传错误',
-                        type: 'error',
-                        center: true
-                    })
+                postData(self.$config.upload_url, data).then(function (data) {
+                    if (undefined != data) {
+                        self.userInfo.avater = data.data;
+                    }
                 });
             },
             handleAvatarSuccess(res, file) {
@@ -282,23 +279,14 @@
 
             getData(currentPage, currentSize) {
                 let self = this;
-
                 let data = {page: currentPage, pageSize: currentSize, name: this.criteria.name, sex: this.criteria.sex};
-
                 postData(self.$config.user_url.user_list_url, data).then(function (data) {
-
-                    self.total = data.totalRecord;
-                    self.tableData = data.data;
-                    self.loading = false;
-                }, function (data) {
-
-                    self.$message({
-                        message: data,
-                        type: 'error',
-                        center: true
-                    });
+                    if (undefined != data) {
+                        self.total = data.data.totalRecord;
+                        self.tableData = data.data.data;
+                        self.loading = false;
+                    }
                 });
-
             },
             sexFormatter(row) {
                 if (row.sex === 0) {
@@ -321,32 +309,30 @@
                 self.userFormDisabled = false;
 
                 postData(self.$config.role_url.get_all_roles_url, {}).then(res => {
-                    res.data.forEach(value => {
-                        value.disabled = false;
-                    });
+                    if (undefined != res) {
+                        res.data.forEach(value => {
+                            value.disabled = false;
+                        });
+                        if (0 === flag) {
+                            self.userInfo = {
+                                name: '',
+                                age: 0,
+                                phone: '',
+                                email: '',
+                                sex: 0,
+                                avater: ''
+                            };
+                            self.selectedRoles = [];
+                            return;
+                        }
+                        if (1 === flag) {
+                            self.userInfo = row;
+                            self.selectedRoles = row.roleIds;
+                            self.all_roles = res.data;
 
-                    if (0 === flag) {
-                        self.userInfo = {
-                            name: '',
-                            age: 0,
-                            phone: '',
-                            email: '',
-                            sex: 0,
-                            avater: ''
-                        };
-                        self.selectedRoles = [];
-                        return;
+                            return;
+                        }
                     }
-
-                    if (1 === flag) {
-                        self.userInfo = row;
-                        self.selectedRoles = row.roleIds;
-                        self.all_roles = res.data;
-
-                        return;
-                    }
-                }, res => {
-
                 });
             },
             saveUserInfo() {
@@ -368,39 +354,29 @@
             updateUser() {
                 let self = this;
                 postData(self.$config.user_url.user_edit_url, self.userInfo).then(function (data) {
-                    self.userInfoDialog = false;
-                    self.getData(self.cur_page, self.cur_size);
-                    self.$message({
-                        message: '操作成功！',
-                        type: 'success',
-                        center: true
-                    });
-                }, function (data) {
-                    self.userFormDisabled = false;
-                    self.$message({
-                        message: '操作失败！',
-                        type: 'error',
-                        center: true
-                    });
+                    if (undefined != data) {
+                        self.userInfoDialog = false;
+                        self.getData(self.cur_page, self.cur_size);
+                        self.$message({
+                            message: '操作成功！',
+                            type: 'success',
+                            center: true
+                        });
+                    }
                 });
             },
             addUser() {
                 let self = this;
                 postData(self.$config.user_url.user_add_url, self.userInfo).then(function (data) {
-                    self.userInfoDialog = false;
-                    self.$message({
-                        type: 'success',
-                        message: '保存成功!',
-                        center: true
-                    });
-                    self.getData(self.cur_page, self.cur_size);
-                }, function (data) {
-                    self.userFormDisabled = false;
-                    self.$message({
-                        message: '加载失败！',
-                        type: 'error',
-                        center: true
-                    });
+                    if (undefined != data) {
+                        self.userInfoDialog = false;
+                        self.$message({
+                            type: 'success',
+                            message: '保存成功!',
+                            center: true
+                        });
+                        self.getData(self.cur_page, self.cur_size);
+                    }
                 });
             },
             deleteUser(userId) {
@@ -412,41 +388,28 @@
                     type: 'warning'
                 }).then(() => {
                     postData(self.$config.user_url.user_delete_url, {userId: userId}).then(function (data) {
-                        self.$message({
-                            type: 'success',
-                            message: '删除成功!',
-                            center: true
-                        });
-                        self.getData(self.cur_page, self.cur_size);
-                    }, function (data) {
-                        self.$message({
-                            message: '加载失败！',
-                            type: 'error',
-                            center: true
-                        });
-                    });
-                }).catch(() => {
-                    self.$message({
-                        type: 'info',
-                        message: '已取消删除',
-                        center: true
+                        if (undefined != data) {
+                            self.$message({
+                                type: 'success',
+                                message: '删除成功!',
+                                center: true
+                            });
+                            self.getData(self.cur_page, self.cur_size);
+                        }
                     });
                 });
             },
             deleteAll() {
                 let self = this;
-                var userIdsarr = [];
-                for (var i = 0, len = self.selectedItems.length; i < len; i++) {
+                let userIdsarr = [];
+                for (let i = 0, len = self.selectedItems.length; i < len; i++) {
                     userIdsarr.push(self.selectedItems[i].id);
                 }
-
-                var data = {userIds: userIdsarr};
-
+                let data = {userIds: userIdsarr};
                 if (userIdsarr.length <= 0) {
                     self.$alert('请选择要删除的数据', {
                         confirmButtonText: '确定'
                     });
-
                     return;
                 }
                 self.$confirm('是否删除数据', '', {
@@ -456,20 +419,15 @@
                     center: true
                 }).then(() => {
                     deleteData(self.$config.user_url.user_delete_all_url, data).then((res) => {
+                        if (undefined != res) {
                             self.$message({
                                 type: 'success',
                                 message: '删除成功!',
                                 center: true
                             });
                             self.getData(this.cur_page, this.cur_size);
-                        },
-                        (res) => {
-                            self.$message({
-                                type: 'error',
-                                message: '操作失败!',
-                                center: true
-                            });
-                        });
+                        }
+                    });
                 }).catch(() => {
                     self.$message({
                         type: 'info',
@@ -483,16 +441,12 @@
             getRoles() {
                 let self = this;
                 postData(self.$config.role_url.get_all_roles_url, {}).then(res => {
-                    self.all_roles = res.data;
-                    self.all_roles.forEach(value => {
-                        value.disabled = false;
-                    })
-                }, res => {
-                    self.$message({
-                        message: '发生未知错误',
-                        type: 'error',
-                        center: true
-                    })
+                    if (undefined != res) {
+                        self.all_roles = res.data;
+                        self.all_roles.forEach(value => {
+                            value.disabled = false;
+                        })
+                    }
                 });
             }
         }

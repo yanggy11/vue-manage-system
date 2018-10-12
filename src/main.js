@@ -9,6 +9,10 @@ import constants from './js/constants';
 import TreeView from "vue-json-tree-view"
 import hasResources from '@/js/directive/hasResources'
 import hasAnyResources from '@/js/directive/hasAnyResources'
+import axios from 'axios'
+import Interceptors from '@/js/interceptors/interceptors'
+import VueI18n from 'vue-i18n'
+
 
 const vueConfig = require('vue-config');
 
@@ -16,22 +20,14 @@ Vue.use(ElementUI);
 Vue.use(VueResource);
 Vue.use(vueConfig, constants);
 Vue.use(TreeView);
+Vue.use(axios);
+Vue.use(VueI18n);
+
+axios.defaults.baseURL='http://localhost:1987/';
 
 Vue.http.options.root = 'http://localhost:1987/';
+Vue.http.interceptors.push(Interceptors);
 
-const intercepters = (request, next) => {
-    let token = localStorage.getItem('AuthenticationToken');
-    if (token) {
-        request.headers.set('Authorization', token);
-    }
-    next((response) => {
-        return response;
-    });
-};
-
-Vue.http.interceptors.push(intercepters);
-
-// 绑定自定义指令
 Vue.directive('hasResource', hasResources);
 Vue.directive('hasAnyResources',hasAnyResources);
 

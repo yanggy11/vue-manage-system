@@ -126,7 +126,7 @@
                 let self = this;
                 return formatDate(new Date(row.createTime), self.$config.time_format.date_time_format);
             },
-            getData(isRecived, isHandled) {
+            async getData(isRecived, isHandled) {
                 let self = this;
                 let isProcessed = 0;
                 let type = 1;

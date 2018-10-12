@@ -101,7 +101,6 @@ const router = new Router({
 
 router.beforeEach((to, from, next) => {
     let token = localStorage.getItem('AuthenticationToken');
-    //调到登录页面之前，判断是否有token，如有token，则跳入主页
     if (to.fullPath == '/login' && token) {
         next('/dashboard');
     }

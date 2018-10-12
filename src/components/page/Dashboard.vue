@@ -69,7 +69,8 @@
                 <el-card shadow="hover" :body-style="{ height: '304px'}">
                     <div slot="header" class="clearfix">
                         <span>待办事项</span>
-                        <el-button style="float: right; padding: 3px 0" type="text" @click="openTodoDialog(undefined)">添加
+                        <el-button style="float: right; padding: 3px 0" type="text" @click="openTodoDialog(undefined)">
+                            添加
                         </el-button>
                     </div>
                     <el-table :data="todoList" :show-header="false" height="304" style="width: 100%;font-size:14px;">
@@ -87,8 +88,10 @@
                         </el-table-column>
                         <el-table-column width="180px" align="right">
                             <template slot-scope="scope">
-                                <el-button v-show="scope.row.status == 0" type="text" size="small" class="el-icon-check" @click="finishItem(scope.row)"></el-button>
-                                <el-button type="text" size="small" class="el-icon-delete" @click="deleteItem(scope.row)"></el-button>
+                                <el-button v-show="scope.row.status == 0" type="text" size="small" class="el-icon-check"
+                                           @click="finishItem(scope.row)"></el-button>
+                                <el-button type="text" size="small" class="el-icon-delete"
+                                           @click="deleteItem(scope.row)"></el-button>
                             </template>
                         </el-table-column>
                     </el-table>
@@ -146,30 +149,31 @@
         },
         methods: {
             finishItem(row) {
-              let self = this;
-              self.$confirm('确定完成代办事项, 是否继续?', '提示', {
-                  confirmButtonText: '确定',
-                  cancelButtonText: '取消',
-                  type: 'warning'
-              }).then(() => {
-                  let data = {
-                      id: row.id
-                  };
-                  postData(self.$config.web_request_url.todo_finish_url,data).then(res => {
-                      self.$message({
-                          type: 'success',
-                          message: '操作成功!'
-                      });
+                let self = this;
+                self.$confirm('确定完成代办事项, 是否继续?', '提示', {
+                    confirmButtonText: '确定',
+                    cancelButtonText: '取消',
+                    type: 'warning'
+                }).then(() => {
+                    let data = {
+                        id: row.id
+                    };
+                    postData(self.$config.web_request_url.todo_finish_url, data).then(res => {
+                        if (undefined != res) {
+                            self.$message({
+                                type: 'success',
+                                message: '操作成功!'
+                            });
 
-                      self.getTodos();
-                  }, res => {
-                  });
-              }).catch(() => {
-                  self.$message({
-                      type: 'info',
-                      message: '已取消操作'
-                  });
-              });
+                            self.getTodos();
+                        }
+                    });
+                }).catch(() => {
+                    self.$message({
+                        type: 'info',
+                        message: '已取消操作'
+                    });
+                });
             },
             deleteItem(row) {
                 let self = this;
@@ -181,14 +185,14 @@
                     let data = {
                         id: row.id
                     };
-                    postData(self.$config.web_request_url.todo_delete_url,data).then(res => {
-                        self.$message({
-                            type: 'success',
-                            message: '操作成功!'
-                        });
-                        self.getTodos();
-                    }, res => {
-
+                    postData(self.$config.web_request_url.todo_delete_url, data).then(res => {
+                        if (undefined != res) {
+                            self.$message({
+                                type: 'success',
+                                message: '操作成功!'
+                            });
+                            self.getTodos();
+                        }
                     });
 
                 }).catch(() => {
@@ -206,8 +210,9 @@
                     userId: localStorage.getItem("userId")
                 };
                 postData(self.$config.web_request_url.todo_get_url, data).then(res => {
-                    console.log(res);
-                    self.todoList = res.data;
+                    if (undefined != res) {
+                        self.todoList = res.data;
+                    }
                 }, res => {
 
                 })
@@ -215,9 +220,9 @@
             openTodoDialog(row) {
                 let self = this;
                 self.todoDialogVisible = true;
-                if(undefined != row) {
+                if (undefined != row) {
                     self.todoItem = row;
-                }else {
+                } else {
                     self.todoItem = {
                         userId: localStorage.getItem("userId")
                     };
@@ -229,7 +234,7 @@
                 self.$refs.todoForm.validate(valid => {
                     if (valid) {
                         postData(this.$config.web_request_url.todo_add_url, self.todoItem).then(res => {
-                            if (res.status === self.$config.OK) {
+                            if (undefined != res) {
                                 self.$message({
                                     message: res.msg,
                                     type: 'success',
@@ -237,14 +242,7 @@
                                 });
                                 self.getTodos();
                                 self.todoDialogVisible = false;
-                            } else {
-                                self.$message({
-                                    message: res.msg,
-                                    type: 'error',
-                                    center: true
-                                });
                             }
-                        }, res => {
                         });
                     }
                 });

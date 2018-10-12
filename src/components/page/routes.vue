@@ -82,21 +82,17 @@
                     page: currentPage,
                     pageSize: currentSize
                 }).then(function (data) {
-                    self.total = data.totalRecord;
-                    self.routes = data.data;
-                    self.loading = false;
+                    if (undefined != data) {
+                        self.total = data.totalRecord;
+                        self.routes = data.data;
+                        self.loading = false;
 
-                    self.$message({
-                        message: '加载成功！',
-                        type: 'success',
-                        center: true
-                    });
-                }, function (data) {
-                    this.$message({
-                        message: '加载失败！',
-                        type: 'error',
-                        center: true
-                    });
+                        self.$message({
+                            message: '加载成功！',
+                            type: 'success',
+                            center: true
+                        });
+                    }
                 })
             },
             dateFormatter(row) {
@@ -126,18 +122,14 @@
                     routeId: dynamicId,
                     enabled: enabled
                 }).then(function (data) {
-                    self.$message({
-                        message: '加载成功！',
-                        type: 'success',
-                        center: true
-                    });
-                    self.getData(this.cur_page, this.cur_size);
-                }, function (data) {
-                    self.$message({
-                        message: '加载失败！',
-                        type: 'error',
-                        center: true
-                    });
+                    if (undefined != data) {
+                        self.$message({
+                            message: '加载成功！',
+                            type: 'success',
+                            center: true
+                        });
+                        self.getData(this.cur_page, this.cur_size);
+                    }
                 });
             }
         }

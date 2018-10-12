@@ -120,12 +120,12 @@
             // 用户名下拉菜单选择事件
             handleCommand(command) {
                 if (command == 'loginout') {
-                    localStorage.removeItem('ms_username')
+                    localStorage.clear();
                     this.$router.push('/login');
                 }
                 switch (command) {
                     case 'loginout':
-                        localStorage.removeItem('ms_username')
+                        localStorage.clear();
                         this.$router.push('/login');
                         break;
                     case 'editPassword':

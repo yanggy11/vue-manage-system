@@ -165,14 +165,10 @@
                 criteria.pageSize = this.page.cur_size;
 
                 postData(self.$config.role_url.get_roles_by_page, criteria).then(response => {
-                    if (self.$config.OK == response.status) {
+                    if (undefined != response) {
                         self.roles = response.data;
-                    } else {
-                        self.$message.error(response.msg);
                     }
-                }, response => {
-
-                })
+                });
             },
             openRoleInfo(flag, row) {
                 let self = this;
@@ -191,17 +187,12 @@
             getResources() {
                 let self = this;
                 postData(self.$config.resources_url.get_resoures_trees, {},).then(function (data) {
-                    self.resources = data.data;
-                }, function (data) {
-                    self.$message({
-                        message: data,
-                        type: 'error',
-                        center: true
-                    });
-                })
+                    if (undefined != data) {
+                        self.resources = data.data;
+                    }
+                });
             },
             selectRows(selection) {
-
                 let self = this;
                 self.selectedItems = [];
                 let len = selection.length;
@@ -216,39 +207,37 @@
                 self.defaultChecked = [];
             },
             saveRoleInfo() {
-
                 let self = this;
                 self.$refs.roleForm.validate(valid => {
                     if (valid) {
                         self.roleInfo.resourcesIds = self.selectedResourcesIds;
-
                         if (undefined == self.roleInfo.id) {
                             postData(self.$config.role_url.add_role_url, self.roleInfo).then(response => {
-                                self.$message({
-                                    message: response.msg,
-                                    type: 'success',
-                                    center: true
-                                });
+                                if (undefined != response) {
+                                    self.$message({
+                                        message: response.msg,
+                                        type: 'success',
+                                        center: true
+                                    });
 
-                                self.roleInfoDialog = false;
+                                    self.roleInfoDialog = false;
 
-                                self.getRoles();
-                            }, response => {
-
+                                    self.getRoles();
+                                }
                             });
                         } else {
                             postData(self.$config.role_url.edit_role_url, self.roleInfo).then(response => {
-                                self.$message({
-                                    message: response.msg,
-                                    type: 'success',
-                                    center: true
-                                });
+                                if (undefined != response) {
+                                    self.$message({
+                                        message: response.msg,
+                                        type: 'success',
+                                        center: true
+                                    });
 
-                                self.roleInfoDialog = false;
+                                    self.roleInfoDialog = false;
 
-                                self.getRoles();
-                            }, response => {
-
+                                    self.getRoles();
+                                }
                             });
                         }
                     }
@@ -277,25 +266,14 @@
                     center: true
                 }).then(() => {
                     deleteData(self.$config.role_url.delete_role_url, {roleIds: ids}).then(res => {
+                        if (undefined != res) {
                             self.$message({
                                 type: 'success',
                                 message: res.msg,
                                 center: true
                             });
                             self.getRoles();
-                        },
-                        res => {
-                            self.$message({
-                                type: 'error',
-                                message: res.msg,
-                                center: true
-                            });
-                        });
-
-                }).catch(() => {
-                    self.$message({
-                        type: 'info',
-                        message: '已取消删除'
+                        }
                     });
                 });
             }
@@ -341,7 +319,7 @@
         margin-left: 15px;
     }
 
-    .form  /deep/ .el-form-item__label {
+    .form /deep/ .el-form-item__label {
         text-align: right;
         float: left;
         font-size: 14px;
