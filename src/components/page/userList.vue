@@ -524,24 +524,57 @@
         border-radius: 5px;
     }
 
-    .form /deep/ .el-form-item__label {
-        text-align: right;
+    .form /deep/ .el-form-item label {
+        text-align: left;
         float: left;
         font-size: 14px;
         color: #606266;
         line-height: 40px;
-        padding: 0 12px 0 0;
+        padding: 0 12px 0 10px;
         -webkit-box-sizing: border-box;
         box-sizing: border-box;
     }
 
+    .transfer /deep/ .el-form-item label {
+        font-size: 14px;
+        color: #606266;
+        line-height: 40px;
+        padding: 0 12px 0 10px;
+        box-sizing: border-box;
+        text-align: left;
+    }
+
     .transfer /deep/ .el-transfer-panel__body {
-        height: 200px;
+        height: 250px;
     }
 
     .transfer /deep/ .el-transfer__buttons {
         display: inline-block;
         vertical-align: middle;
         padding: 0 5px;
+    }
+
+    .transfer /deep/ .el-transfer-panel .el-transfer-panel__header {
+        padding-left: 0;
+        height: 40px;
+        line-height: 40px;
+        background: #f5f7fa;
+        margin: 0;
+        border-bottom: 1px solid #ebeef5;
+        box-sizing: border-box;
+        color: #000;
+    }
+
+    .transfer /deep/ .el-transfer-panel__item.el-checkbox .el-checkbox__label {
+        overflow: hidden;
+        display: block;
+        box-sizing: border-box;
+        padding-left: 24px;
+        line-height: 30px;
+        width: 200px;
+    }
+
+    .transfer /deep/ .el-transfer-panel .el-transfer-panel__header .el-checkbox .el-checkbox__label span {
+        right: -60px;
     }
 </style>
