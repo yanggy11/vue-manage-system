@@ -73,6 +73,11 @@ const router = new Router({
                     meta: {title: '路由管理', requireAuth: true, resource: 'P_ROUTES'}
                 },
                 {
+                    path: '/orders',
+                    component: resolve => require(['../components/page/Order.vue'], resolve),
+                    meta: {title: '订单管理', requireAuth: true, resource: 'P_ORDERS'}
+                },
+                {
                     // 角色管理
                     path: '/roles',
                     component: resolve => require(['../components/page/role.vue'], resolve),

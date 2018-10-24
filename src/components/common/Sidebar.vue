@@ -51,7 +51,7 @@
                         icon: 'el-icon-tickets',
                         index: '4',
                         title: '数据管理',
-                        resources: ['P_DATA_MANAGE', 'P_USERS', 'P_RESOURCES', 'P_ROUTES', 'P_ROLE'],
+                        resources: ['P_DATA_MANAGE', 'P_USERS', 'P_RESOURCES', 'P_ROUTES', 'P_ROLE', 'P_ORDERS'],
                         subs: [
                             {
                                 index: 'usersList',
@@ -70,6 +70,10 @@
                                 index: 'roles',
                                 title: '角色管理',
                                 resources: 'P_ROLE'
+                            },{
+                                index: 'orders',
+                                title: '订单管理',
+                                resources: 'P_ORDERS'
                             }
                         ]
                     },

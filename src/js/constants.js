@@ -48,7 +48,10 @@ export default {
         todo_add_url: 'web/todos/addTodos',
         todo_get_url:'web/todos/getTodos',
         todo_finish_url: 'web/todos/finish',
-        todo_delete_url: 'web/todos/delete'
+        todo_delete_url: 'web/todos/delete',
+        orders: {
+            url_get_orders: 'web/order/getOrders'
+        }
     },
     upload_url: 'upload/upload'
 };

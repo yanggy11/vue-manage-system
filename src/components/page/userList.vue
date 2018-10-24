@@ -480,9 +480,7 @@
         height: 178px;
         display: block;
     }
-</style>
 
-<style>
     .el-input__inner {
         -webkit-appearance: none;
         background-color: #fff;
@@ -565,7 +563,7 @@
         color: #000;
     }
 
-    .transfer /deep/ .el-transfer-panel__item.el-checkbox .el-checkbox__label {
+    .transfer >>> .el-transfer-panel__item.el-checkbox .el-checkbox__label {
         overflow: hidden;
         display: block;
         box-sizing: border-box;
@@ -574,7 +572,7 @@
         width: 200px;
     }
 
-    .transfer /deep/ .el-transfer-panel .el-transfer-panel__header .el-checkbox .el-checkbox__label span {
+    .transfer >>> .el-transfer-panel .el-transfer-panel__header .el-checkbox .el-checkbox__label span {
         right: -60px;
     }
 </style>

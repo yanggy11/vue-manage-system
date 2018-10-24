@@ -22,7 +22,7 @@
             <el-table-column prop="enabled" label="启用" align="center" :formatter="enabledFormatter" width="60" fixed/>
             <el-table-column prop="createTime" label="创建时间" align="center" :formatter="dateFormatter" fixed/>
             <el-table-column label="操作" align="center" fixed>
-                <template scope="scope">
+                <template slot-scope="scope">
                     <el-button size="small" icon="delete">编辑</el-button>
                     <el-button size="small" type="danger" @click="enableOrDisable(scope.row.dynamicId, true)"
                                icon="delete" v-if="scope.row.enabled == false">启用
